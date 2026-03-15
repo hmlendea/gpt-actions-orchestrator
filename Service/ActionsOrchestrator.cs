@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using GptActionsOrchestrator.Api.Responses;
+using GptActionsOrchestrator.Integrations.GitHub.Service;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service;
 using GptActionsOrchestrator.Integrations.SteamStorefront.Service;
 using GptActionsOrchestrator.Service.Models;
@@ -8,6 +9,7 @@ using GptActionsOrchestrator.Service.Models;
 namespace GptActionsOrchestrator.Service
 {
     public sealed class ActionsOrchestrator(
+        IGitHubService gitHubService,
         IPersonalLogManagerService personalLogManagerService,
         ISteamStoreService steamStoreService) : IActionsOrchestrator
     {
@@ -17,7 +19,19 @@ namespace GptActionsOrchestrator.Service
             GptAction action = GetGptActionFromParameters(rawParameters);
             object data;
 
-            if (action == GptAction.GetPersonalLogs)
+            if (action == GptAction.GetGitHubRepositoryFile)
+            {
+                data = gitHubService.GetRepositoryFile(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"),
+                    GetParameter<string>(parameters, "path"));
+            }
+            else if (action == GptAction.GetGitHubUserRepositories)
+            {
+                data = gitHubService.GetUserRepositories(
+                    GetParameter<string>(parameters, "username"));
+            }
+            else if (action == GptAction.GetPersonalLogs)
             {
                 data = personalLogManagerService.GetPersonalLogs(
                     GetParameter<string>(parameters, "date"),

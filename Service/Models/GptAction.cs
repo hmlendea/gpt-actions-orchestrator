@@ -9,8 +9,10 @@ namespace GptActionsOrchestrator.Service.Models
         static readonly Dictionary<string, GptAction> values = new()
         {
             { nameof(Unknown), new GptAction("unknown", nameof(Unknown)) },
+            { nameof(GetGitHubRepositoryFile), new GptAction("github.repository.file.get", nameof(GetGitHubRepositoryFile)) },
+            { nameof(GetGitHubUserRepositories), new GptAction("github.user.repositories.get", nameof(GetGitHubUserRepositories)) },
             { nameof(GetPersonalLogs), new GptAction("personallogmanager.logs.get", nameof(GetPersonalLogs)) },
-            { nameof(GetSteamAppData), new GptAction("steam.store.app.get", nameof(GetSteamAppData)) }
+            { nameof(GetSteamAppData), new GptAction("steam.store.app.get", nameof(GetSteamAppData)) },
         };
 
         public string Id { get; }
@@ -24,6 +26,8 @@ namespace GptActionsOrchestrator.Service.Models
         }
 
         public static GptAction Unknown => values[nameof(Unknown)];
+        public static GptAction GetGitHubRepositoryFile => values[nameof(GetGitHubRepositoryFile)];
+        public static GptAction GetGitHubUserRepositories => values[nameof(GetGitHubUserRepositories)];
         public static GptAction GetPersonalLogs => values[nameof(GetPersonalLogs)];
         public static GptAction GetSteamAppData => values[nameof(GetSteamAppData)];
 
