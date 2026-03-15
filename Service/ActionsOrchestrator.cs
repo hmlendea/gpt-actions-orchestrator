@@ -34,8 +34,8 @@ namespace GptActionsOrchestrator.Service
             else if (action == GptAction.GetPersonalLogs)
             {
                 data = personalLogManagerService.GetPersonalLogs(
-                    GetParameter<string>(parameters, "date"),
-                    GetParameter<string>(parameters, "time"),
+                    GetParameter<string>(parameters, "date_beginning"),
+                    GetParameter<string>(parameters, "date_end"),
                     GetParameter<string>(parameters, "template"),
                     GetParameter<string>(parameters, "localisation"),
                     GetParameter<Dictionary<string, string>>(parameters, "data"),

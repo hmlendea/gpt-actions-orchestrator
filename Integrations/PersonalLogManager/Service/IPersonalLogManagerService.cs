@@ -6,8 +6,8 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
     public interface IPersonalLogManagerService
     {
         public PersonalLogs GetPersonalLogs(
-            string date,
-            string time,
+            string dateBeginning,
+            string dateEnd,
             string template,
             string localisation,
             Dictionary<string, string> data,
