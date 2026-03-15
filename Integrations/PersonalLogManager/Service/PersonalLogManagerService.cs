@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Net.Http;
 using GptActionsOrchestrator.Configuration;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Client;
@@ -20,8 +21,8 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
         readonly NuciApiClient client = new(plmSettings.BaseUrl);
 
         public PersonalLogs GetPersonalLogs(
-            string date,
-            string time,
+            string dateBeginning,
+            string dateEnd,
             string template,
             string localisation,
             Dictionary<string, string> data,
@@ -30,8 +31,8 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             IEnumerable<LogInfo> logInfos =
             [
                 new(MyLogInfoKey.Template, template),
-                new(MyLogInfoKey.Date, date),
-                new(MyLogInfoKey.Time, time),
+                new(MyLogInfoKey.DateBeginning, dateBeginning),
+                new(MyLogInfoKey.Time, dateEnd),
                 new(MyLogInfoKey.Localisation, localisation),
                 new(MyLogInfoKey.Count, count)
             ];
@@ -43,7 +44,13 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
 
             try
             {
-                PersonalLogs personalLogs = RetrievePersonalLogs(date, time, template, localisation, data, count);
+                PersonalLogs personalLogs = RetrievePersonalLogs(
+                    dateBeginning,
+                    dateEnd,
+                    template,
+                    localisation,
+                    data,
+                    count);
 
                 logger.Debug(
                     MyOperation.GetPersonalLogs,
@@ -65,8 +72,8 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
         }
 
         PersonalLogs RetrievePersonalLogs(
-            string date,
-            string time,
+            string dateBeginning,
+            string dateEnd,
             string template,
             string localisation,
             Dictionary<string, string> data,
@@ -82,7 +89,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             NuciApiResponse response =
                 client.SendRequestAsync<GetPersonalLogsRequest, GetPersonalLogsResponse>(
                     HttpMethod.Get,
-                    BuildRequest(date, time, template, localisation, data, count),
+                    BuildRequest(dateBeginning, dateEnd, template, localisation, data, count),
                     authorisation,
                     "PersonalLog").Result;
 
@@ -98,8 +105,8 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
         }
 
         GetPersonalLogsRequest BuildRequest(
-            string date,
-            string time,
+            string dateBeginning,
+            string dateEnd,
             string template,
             string localisation,
             Dictionary<string, string> data,
@@ -107,8 +114,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
         {
             GetPersonalLogsRequest request = new()
             {
-                Date = date,
-                Time = time,
+                Date = BuildDateRangeRegex(dateBeginning, dateEnd),
                 Template = template,
                 Localisation = localisation,
                 Data = data
@@ -129,6 +135,28 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             }
 
             return request;
+        }
+
+        public static string BuildDateRangeRegex(string dateBeginning, string dateEnd)
+        {
+            DateOnly start = DateOnly.ParseExact(dateBeginning, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+            DateOnly end = DateOnly.ParseExact(dateEnd, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+            if (end < start)
+            {
+                throw new ArgumentException($"The end date must be greater than or equal to the beginning date.");
+            }
+
+            List<string> dates = [];
+
+            DateOnly current = start;
+            while (current <= end)
+            {
+                dates.Add(current.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                current = current.AddDays(1);
+            }
+
+            return "(" + string.Join("|", dates) + ")";
         }
     }
 }
