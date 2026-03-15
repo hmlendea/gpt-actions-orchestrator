@@ -11,7 +11,11 @@ namespace GptActionsOrchestrator.Logging
         public static LogInfoKey Count => new MyLogInfoKey(nameof(Count));
         public static LogInfoKey Date => new MyLogInfoKey(nameof(Date));
         public static LogInfoKey Localisation => new MyLogInfoKey(nameof(Localisation));
+        public static LogInfoKey Path => new MyLogInfoKey(nameof(Path));
+        public static LogInfoKey Reference => new MyLogInfoKey(nameof(Reference));
+        public static LogInfoKey Repository => new MyLogInfoKey(nameof(Repository));
         public static LogInfoKey Template => new MyLogInfoKey(nameof(Template));
         public static LogInfoKey Time => new MyLogInfoKey(nameof(Time));
+        public static LogInfoKey Username => new MyLogInfoKey(nameof(Username));
     }
 }
