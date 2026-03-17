@@ -26,6 +26,13 @@ namespace GptActionsOrchestrator.Service
                     GetParameter<string>(parameters, "repository"),
                     GetParameter<string>(parameters, "path"));
             }
+            else if (action == GptAction.GetGitHubRepositoryReadme)
+            {
+                data = gitHubService.GetRepositoryFile(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"),
+                    "README.md");
+            }
             else if (action == GptAction.GetGitHubUserRepositories)
             {
                 data = gitHubService.GetUserRepositories(

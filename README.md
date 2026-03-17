@@ -114,7 +114,7 @@ Notes:
 
 Both action names and action IDs are accepted in the `action` query parameter.
 
-## 1) github.repository.file.get
+## github.repository.file.get
 
 - Name: `GetGitHubRepositoryFile`
 - ID: `github.repository.file.get`
@@ -136,7 +136,28 @@ GET /Actions?action=github.repository.file.get&username=hmlendea&repository=gpta
 "# Overview\n..."
 ```
 
-## 2) github.user.repositories.get
+## github.repository.readme.get
+
+- Name: `GetGitHubRepositoryReadme`
+- ID: `github.repository.readme.get`
+
+Action-specific query parameters:
+- `username` *(Mandatory)*
+- `repository` *(Mandatory)*
+
+Example:
+
+**Request:**
+```http
+GET /Actions?action=github.repository.readme.get&username=hmlendea&repository=gpt-actions-orchestrator
+```
+
+**Response `data` field:**
+```json
+"# Overview\n..."
+```
+
+## github.user.repositories.get
 
 - Name: `GetGitHubUserRepositories`
 - ID: `github.user.repositories.get`
@@ -169,7 +190,7 @@ GET /Actions?action=github.user.repositories.get&username=hmlendea
 ]
 ```
 
-## 3) personallogmanager.logs.get
+## personallogmanager.logs.get
 
 - Name: `GetPersonalLogs`
 - ID: `personallogmanager.logs.get`
@@ -200,7 +221,7 @@ GET /Actions?action=personallogmanager.logs.get&date_beginning=2026-03-12&date_e
 }
 ```
 
-## 4) steam.store.app.get
+## steam.store.app.get
 
 - Name: `GetSteamAppData`
 - ID: `steam.store.app.get`
