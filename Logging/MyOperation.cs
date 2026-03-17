@@ -8,7 +8,8 @@ namespace GptActionsOrchestrator.Logging
 
         public static Operation GetPersonalLogs => new MyOperation(nameof(GetPersonalLogs));
 
-        public static Operation GitHubFileContentRetrieval => new MyOperation(nameof(GitHubFileContentRetrieval));
+        public static Operation GitHubRepositoryFileContentRetrieval => new MyOperation(nameof(GitHubRepositoryFileContentRetrieval));
+        public static Operation GitHubRepositoryReleasesRetrieval => new MyOperation(nameof(GitHubRepositoryReleasesRetrieval));
         public static Operation GitHubUserRepositoriesRetrieval => new MyOperation(nameof(GitHubUserRepositoriesRetrieval));
 
         public static Operation SteamStoreAppDataRetrieval => new MyOperation(nameof(SteamStoreAppDataRetrieval));

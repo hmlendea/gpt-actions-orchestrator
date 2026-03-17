@@ -157,13 +157,44 @@ GET /Actions?action=github.repository.readme.get&username=hmlendea&repository=gp
 "# Overview\n..."
 ```
 
+## github.repository.releases.get
+
+- Name: `GetGitHubRepositoryReleases`
+- ID: `github.repository.releases.get`
+
+Action-specific query parameters:
+- `username` *(Optional)*
+- `repository` *(Mandatory)*
+
+Example:
+
+**Request:**
+```http
+GET /Actions?action=github.repository.releases.get&username=hmlendea&repository=product-key-manager
+```
+
+**Response `data` field:**
+```json
+[
+	{
+    	"tag_name": "v5.0.0",
+    	"name": "v5.0.0",
+    	"body": "## What's Changed\r\n* Replaced HMAC with API Key by @hmlendea in https://github.com	hmlendea/product-key-manager/pull/46\r\n* Upgraded to .NET 10 by @hmlendea in https://github	com/hmlendea/product-key-manager/pull/45\r\n\r\n\r\n**Full Changelog**: https://github.com	hmlendea/product-key-manager/compare/v4.1.0...v5.0.0",
+    	"draft": false,
+    	"prerelease": false,
+    	"created_at": "2026-02-28T19:13:06+00:00",
+    	"published_at": "2026-02-28T19:18:25+00:00"
+    }
+]
+```
+
 ## github.user.repositories.get
 
 - Name: `GetGitHubUserRepositories`
 - ID: `github.user.repositories.get`
 
 Action-specific query parameters:
-- `username` *(Optional)* - If omitted, `gitHubSettings.username` is used.
+- `username` *(Mandatory)*
 
 Example:
 
