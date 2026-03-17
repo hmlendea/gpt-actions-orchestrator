@@ -114,7 +114,46 @@ Notes:
 
 Both action names and action IDs are accepted in the `action` query parameter.
 
-## 1) github.repository.file.get
+## github.repository.get
+
+- Name: `GetGitHubRepository`
+- ID: `github.repository.get`
+
+Action-specific query parameters:
+- `username` *(Mandatory)*
+- `repository` *(Mandatory)*
+
+Example:
+
+**Request:**
+```http
+GET /Actions?action=github.repository.get&username=hmlendea&repository=narivia
+```
+
+**Response `data` field:**
+```json
+{
+    "name": "narivia",
+    "description": "Turn-based strategy game",
+    "language": "C#",
+    "stargazers_count": 7,
+    "topics": [
+      	"csharp",
+      	"dotnet",
+      	"game",
+      	"monogame",
+      	"strategy-game",
+      	"xna"
+    ],
+    "archived": false,
+    "private": false,
+    "fork": false,
+    "created_at": "2016-09-28T23:03:51+00:00",
+    "pushed_at": "2025-10-25T13:08:00+00:00"
+}
+```
+
+## github.repository.file.get
 
 - Name: `GetGitHubRepositoryFile`
 - ID: `github.repository.file.get`
@@ -136,13 +175,65 @@ GET /Actions?action=github.repository.file.get&username=hmlendea&repository=gpta
 "# Overview\n..."
 ```
 
-## 2) github.user.repositories.get
+## github.repository.readme.get
+
+- Name: `GetGitHubRepositoryReadme`
+- ID: `github.repository.readme.get`
+
+Action-specific query parameters:
+- `username` *(Mandatory)*
+- `repository` *(Mandatory)*
+
+Example:
+
+**Request:**
+```http
+GET /Actions?action=github.repository.readme.get&username=hmlendea&repository=gpt-actions-orchestrator
+```
+
+**Response `data` field:**
+```json
+"# Overview\n..."
+```
+
+## github.repository.releases.get
+
+- Name: `GetGitHubRepositoryReleases`
+- ID: `github.repository.releases.get`
+
+Action-specific query parameters:
+- `username` *(Optional)*
+- `repository` *(Mandatory)*
+
+Example:
+
+**Request:**
+```http
+GET /Actions?action=github.repository.releases.get&username=hmlendea&repository=product-key-manager
+```
+
+**Response `data` field:**
+```json
+[
+	{
+    	"tag_name": "v5.0.0",
+    	"name": "v5.0.0",
+    	"body": "## What's Changed\r\n* Replaced HMAC with API Key by @hmlendea in https://github.com	hmlendea/product-key-manager/pull/46\r\n* Upgraded to .NET 10 by @hmlendea in https://github	com/hmlendea/product-key-manager/pull/45\r\n\r\n\r\n**Full Changelog**: https://github.com	hmlendea/product-key-manager/compare/v4.1.0...v5.0.0",
+    	"draft": false,
+    	"prerelease": false,
+    	"created_at": "2026-02-28T19:13:06+00:00",
+    	"published_at": "2026-02-28T19:18:25+00:00"
+    }
+]
+```
+
+## github.user.repositories.get
 
 - Name: `GetGitHubUserRepositories`
 - ID: `github.user.repositories.get`
 
 Action-specific query parameters:
-- `username` *(Optional)* - If omitted, `gitHubSettings.username` is used.
+- `username` *(Mandatory)*
 
 Example:
 
@@ -169,7 +260,7 @@ GET /Actions?action=github.user.repositories.get&username=hmlendea
 ]
 ```
 
-## 3) personallogmanager.logs.get
+## personallogmanager.logs.get
 
 - Name: `GetPersonalLogs`
 - ID: `personallogmanager.logs.get`
@@ -200,7 +291,7 @@ GET /Actions?action=personallogmanager.logs.get&date_beginning=2026-03-12&date_e
 }
 ```
 
-## 4) steam.store.app.get
+## steam.store.app.get
 
 - Name: `GetSteamAppData`
 - ID: `steam.store.app.get`

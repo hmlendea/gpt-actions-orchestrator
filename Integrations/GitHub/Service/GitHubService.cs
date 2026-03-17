@@ -84,6 +84,59 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             }
         }
 
+        public GitHubRepository GetRepository(
+            string username,
+            string repositoryName)
+        {
+            bool isAuthenticatedUser =
+                string.IsNullOrWhiteSpace(username) ||
+                string.Equals(username, gitHubSettings.Username, StringComparison.OrdinalIgnoreCase);
+
+            string effectiveUsername = isAuthenticatedUser
+                ? gitHubSettings.Username
+                : username;
+
+            IEnumerable<LogInfo> logInfos =
+            [
+                new(MyLogInfoKey.Username, effectiveUsername),
+                new(MyLogInfoKey.Repository, repositoryName)
+            ];
+
+            logger.Info(
+                MyOperation.GitHubRepositoryRetrieval,
+                OperationStatus.Started,
+                logInfos);
+
+            try
+            {
+                string encodedOwner = Uri.EscapeDataString(effectiveUsername);
+                string encodedRepository = Uri.EscapeDataString(repositoryName);
+
+                string endpoint = $"{ApiBaseUrl}/repos/{encodedOwner}/{encodedRepository}";
+
+                GitHubRepository repository = httpClient
+                    .GetStringAsync(endpoint).Result
+                    .FromJson<GitHubRepository>();
+
+                logger.Debug(
+                    MyOperation.GitHubRepositoryRetrieval,
+                    OperationStatus.Success,
+                    logInfos);
+
+                return repository;
+            }
+            catch (Exception exception)
+            {
+                logger.Error(
+                    MyOperation.GitHubRepositoryRetrieval,
+                    OperationStatus.Failure,
+                    exception,
+                    logInfos);
+
+                throw;
+            }
+        }
+
         public string GetRepositoryFile(string username, string repositoryName, string path)
         {
             IEnumerable<LogInfo> logInfos =
@@ -94,7 +147,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             ];
 
             logger.Info(
-                MyOperation.GitHubFileContentRetrieval,
+                MyOperation.GitHubRepositoryFileContentRetrieval,
                 OperationStatus.Started,
                 logInfos);
 
@@ -119,7 +172,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
                 string content = response.Content.ReadAsStringAsync().Result;
 
                 logger.Debug(
-                    MyOperation.GitHubFileContentRetrieval,
+                    MyOperation.GitHubRepositoryFileContentRetrieval,
                     OperationStatus.Success,
                     logInfos);
 
@@ -128,7 +181,68 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             catch (Exception exception)
             {
                 logger.Error(
-                    MyOperation.GitHubFileContentRetrieval,
+                    MyOperation.GitHubRepositoryFileContentRetrieval,
+                    OperationStatus.Failure,
+                    exception,
+                    logInfos);
+
+                throw;
+            }
+        }
+
+        public IReadOnlyCollection<GitHubRelease> GetRepositoryReleases(
+            string username,
+            string repositoryName)
+        {
+            IEnumerable<LogInfo> logInfos =
+            [
+                new(MyLogInfoKey.Username, username),
+                new(MyLogInfoKey.Repository, repositoryName)
+            ];
+
+            logger.Info(
+                MyOperation.GitHubRepositoryReleasesRetrieval,
+                OperationStatus.Started,
+                logInfos);
+
+            try
+            {
+                string encodedOwner = Uri.EscapeDataString(username);
+                string encodedRepository = Uri.EscapeDataString(repositoryName);
+
+                List<GitHubRelease> releases = [];
+                int page = 1;
+
+                while (true)
+                {
+                    string endpoint =
+                        $"{ApiBaseUrl}/repos/{encodedOwner}/{encodedRepository}/releases?per_page=100&page={page}";
+
+                    List<GitHubRelease> pageItems = httpClient
+                        .GetStringAsync(endpoint).Result
+                        .FromJson<List<GitHubRelease>>();
+
+                    if (pageItems is null || pageItems.Count == 0)
+                    {
+                        break;
+                    }
+
+                    releases.AddRange(pageItems);
+                    page++;
+                }
+
+                logger.Debug(
+                    MyOperation.GitHubRepositoryReleasesRetrieval,
+                    OperationStatus.Success,
+                    logInfos,
+                    new LogInfo(MyLogInfoKey.Count, releases.Count));
+
+                return releases;
+            }
+            catch (Exception exception)
+            {
+                logger.Error(
+                    MyOperation.GitHubRepositoryReleasesRetrieval,
                     OperationStatus.Failure,
                     exception,
                     logInfos);

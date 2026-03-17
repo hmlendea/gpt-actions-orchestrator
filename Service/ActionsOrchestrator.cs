@@ -19,12 +19,31 @@ namespace GptActionsOrchestrator.Service
             GptAction action = GetGptActionFromParameters(rawParameters);
             object data;
 
-            if (action == GptAction.GetGitHubRepositoryFile)
+            if (action == GptAction.GetGitHubRepository)
+            {
+                data = gitHubService.GetRepository(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"));
+            }
+            else if (action == GptAction.GetGitHubRepositoryFile)
             {
                 data = gitHubService.GetRepositoryFile(
                     GetParameter<string>(parameters, "username"),
                     GetParameter<string>(parameters, "repository"),
                     GetParameter<string>(parameters, "path"));
+            }
+            else if (action == GptAction.GetGitHubRepositoryReadme)
+            {
+                data = gitHubService.GetRepositoryFile(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"),
+                    "README.md");
+            }
+            else if (action == GptAction.GetGitHubRepositoryReleases)
+            {
+                data = gitHubService.GetRepositoryReleases(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"));
             }
             else if (action == GptAction.GetGitHubUserRepositories)
             {
