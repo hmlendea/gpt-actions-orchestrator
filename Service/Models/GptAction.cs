@@ -9,6 +9,7 @@ namespace GptActionsOrchestrator.Service.Models
         static readonly Dictionary<string, GptAction> values = new()
         {
             { nameof(Unknown), new GptAction("unknown", nameof(Unknown)) },
+            { nameof(GetGitHubRepository), new GptAction("github.repository.get", nameof(GetGitHubRepository)) },
             { nameof(GetGitHubRepositoryFile), new GptAction("github.repository.file.get", nameof(GetGitHubRepositoryFile)) },
             { nameof(GetGitHubRepositoryReadme), new GptAction("github.repository.readme.get", nameof(GetGitHubRepositoryReadme)) },
             { nameof(GetGitHubRepositoryReleases), new GptAction("github.repository.releases.get", nameof(GetGitHubRepositoryReleases)) },
@@ -28,6 +29,7 @@ namespace GptActionsOrchestrator.Service.Models
         }
 
         public static GptAction Unknown => values[nameof(Unknown)];
+        public static GptAction GetGitHubRepository => values[nameof(GetGitHubRepository)];
         public static GptAction GetGitHubRepositoryFile => values[nameof(GetGitHubRepositoryFile)];
         public static GptAction GetGitHubRepositoryReadme => values[nameof(GetGitHubRepositoryReadme)];
         public static GptAction GetGitHubRepositoryReleases => values[nameof(GetGitHubRepositoryReleases)];

@@ -84,6 +84,59 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             }
         }
 
+        public GitHubRepository GetRepository(
+            string username,
+            string repositoryName)
+        {
+            bool isAuthenticatedUser =
+                string.IsNullOrWhiteSpace(username) ||
+                string.Equals(username, gitHubSettings.Username, StringComparison.OrdinalIgnoreCase);
+
+            string effectiveUsername = isAuthenticatedUser
+                ? gitHubSettings.Username
+                : username;
+
+            IEnumerable<LogInfo> logInfos =
+            [
+                new(MyLogInfoKey.Username, effectiveUsername),
+                new(MyLogInfoKey.Repository, repositoryName)
+            ];
+
+            logger.Info(
+                MyOperation.GitHubRepositoryRetrieval,
+                OperationStatus.Started,
+                logInfos);
+
+            try
+            {
+                string encodedOwner = Uri.EscapeDataString(effectiveUsername);
+                string encodedRepository = Uri.EscapeDataString(repositoryName);
+
+                string endpoint = $"{ApiBaseUrl}/repos/{encodedOwner}/{encodedRepository}";
+
+                GitHubRepository repository = httpClient
+                    .GetStringAsync(endpoint).Result
+                    .FromJson<GitHubRepository>();
+
+                logger.Debug(
+                    MyOperation.GitHubRepositoryRetrieval,
+                    OperationStatus.Success,
+                    logInfos);
+
+                return repository;
+            }
+            catch (Exception exception)
+            {
+                logger.Error(
+                    MyOperation.GitHubRepositoryRetrieval,
+                    OperationStatus.Failure,
+                    exception,
+                    logInfos);
+
+                throw;
+            }
+        }
+
         public string GetRepositoryFile(string username, string repositoryName, string path)
         {
             IEnumerable<LogInfo> logInfos =

@@ -19,7 +19,13 @@ namespace GptActionsOrchestrator.Service
             GptAction action = GetGptActionFromParameters(rawParameters);
             object data;
 
-            if (action == GptAction.GetGitHubRepositoryFile)
+            if (action == GptAction.GetGitHubRepository)
+            {
+                data = gitHubService.GetRepository(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"));
+            }
+            else if (action == GptAction.GetGitHubRepositoryFile)
             {
                 data = gitHubService.GetRepositoryFile(
                     GetParameter<string>(parameters, "username"),

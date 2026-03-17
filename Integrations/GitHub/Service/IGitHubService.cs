@@ -14,6 +14,16 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             string username);
 
         /// <summary>
+        /// Retrieves a GitHub repository by its name and the username of its owner.
+        /// </summary>
+        /// <param name="username">The username of the GitHub user.</param>
+        /// <param name="repositoryName">The name of the repository.</param>
+        /// <returns>The GitHub repository.</returns>
+        GitHubRepository GetRepository(
+            string username,
+            string repositoryName);
+
+        /// <summary>
         /// Retrieves the content of a file in a GitHub repository.
         /// </summary>
         /// <param name="username">The username of the GitHub user.</param>

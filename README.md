@@ -114,6 +114,45 @@ Notes:
 
 Both action names and action IDs are accepted in the `action` query parameter.
 
+## github.repository.get
+
+- Name: `GetGitHubRepository`
+- ID: `github.repository.get`
+
+Action-specific query parameters:
+- `username` *(Mandatory)*
+- `repository` *(Mandatory)*
+
+Example:
+
+**Request:**
+```http
+GET /Actions?action=github.repository.get&username=hmlendea&repository=narivia
+```
+
+**Response `data` field:**
+```json
+{
+    "name": "narivia",
+    "description": "Turn-based strategy game",
+    "language": "C#",
+    "stargazers_count": 7,
+    "topics": [
+      	"csharp",
+      	"dotnet",
+      	"game",
+      	"monogame",
+      	"strategy-game",
+      	"xna"
+    ],
+    "archived": false,
+    "private": false,
+    "fork": false,
+    "created_at": "2016-09-28T23:03:51+00:00",
+    "pushed_at": "2025-10-25T13:08:00+00:00"
+}
+```
+
 ## github.repository.file.get
 
 - Name: `GetGitHubRepositoryFile`
