@@ -66,7 +66,7 @@ namespace GptActionsOrchestrator.Service
             }
             else
             {
-                throw new NotImplementedException($"Action '{action.Name}' is not implemented.");
+                throw new NotImplementedException($"The '{action.Id}' action is not supported.");
             }
 
             return new GetActionResponse
