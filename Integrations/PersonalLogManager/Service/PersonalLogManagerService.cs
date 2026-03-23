@@ -32,7 +32,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             [
                 new(MyLogInfoKey.Template, template),
                 new(MyLogInfoKey.DateBeginning, dateBeginning),
-                new(MyLogInfoKey.Time, dateEnd),
+                new(MyLogInfoKey.DateEnd, dateEnd),
                 new(MyLogInfoKey.Localisation, localisation),
                 new(MyLogInfoKey.Count, count)
             ];

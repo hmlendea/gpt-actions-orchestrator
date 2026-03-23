@@ -19,21 +19,12 @@ namespace GptActionsOrchestrator.Api.Controllers
 
         [HttpGet]
         public ActionResult Get([FromQuery] GetActionRequest request)
-        {
-            GptAction action = GptAction.FromString(request.GptActionName);
-
-            if (action.Equals(GptAction.Unknown))
-            {
-                return BadRequest(new NuciApiErrorResponse($"The requested action is not valid."));
-            }
-
-            return ProcessRequest(
+            => ProcessRequest(
                 request,
                 () => actionsOrchestrator.Get(Request.Query.ToDictionary(
                     pair => pair.Key,
                     pair => pair.Value.ToString()
                 )),
                 authorisation);
-        }
     }
 }
