@@ -3,7 +3,7 @@
 [![Build Status](https://github.com/hmlendea/gptactionsorchestrator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/gptactionsorchestrator/actions/workflows/dotnet.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://gnu.org/licenses/gpl-3.0)
 
-# Overview
+# GPT Actions Orchestrator
 
 This service exposes a single HTTP endpoint that routes requests to specific integrations.
 It is designed to be used as an Actions backend for GPT-style assistants.
@@ -14,11 +14,11 @@ Current integrations:
 - [Personal Log Manager](https://github.com/hmlendea/personal-log-manager)
 - [Steam Web API](https://steamcommunity.com/dev)
 
-# Requirements
+## Requirements
 
-- .NET SDK 10.0
+- .NET SDK/runtime with support for `net10.0`
 
-# Getting Started
+## Getting Started
 
 1. Clone the repository.
 2. Update `appsettings.json` with your real values.
@@ -31,7 +31,7 @@ dotnet run
 
 By default, ASP.NET Core also reads `appsettings.Development.json` and environment variables if present.
 
-# Configuration
+## Configuration
 
 Configuration is loaded from `appsettings.json`.
 
@@ -57,42 +57,42 @@ Configuration is loaded from `appsettings.json`.
 }
 ```
 
-## securitySettings
+### securitySettings
 
 - `clientId`: Client identifier used when calling upstream APIs, where applicable.
 - `apiKey`: API key required to access this orchestrator endpoint.
 
-## gitHubSettings
+### gitHubSettings
 
 - `username`: Default GitHub username used when no `username` query parameter is provided.
 - `apiKey`: GitHub personal access token used for authenticated API calls.
 
-## personalLogManagerSettings
+### personalLogManagerSettings
 
 - `baseUrl`: Base URL for the Personal Log Manager API.
 - `apiKey`: Bearer token for Personal Log Manager.
 - `hmacSigningKey`: Shared key used for HMAC request signing and response validation.
 
-## nuciLoggerSettings
+### nuciLoggerSettings
 
 - `logFilePath`: Path to the log file.
 - `isFileOutputEnabled`: Enables/disables file logging.
 
-# API
+## API
 
-## Endpoint
+### Endpoint
 
 - Method: `GET`
 - Route: `/Actions`
 
 The endpoint always expects a mandatory `action` query parameter, as well as other action-specific parameters.
 
-## Authorization
+### Authorization
 
 The API uses API-key authorization.
 Configure your caller to send the expected authorization header based on your `securitySettings` values.
 
-## Response Shape
+### Response Shape
 
 Successful responses follow this shape:
 ```json
@@ -108,16 +108,16 @@ Notes:
 - `action` is returned as the action ID (`personallogmanager.logs.get`, `steam.store.app.get`).
 - `data` depends on the selected action.
 
-## Error Handling
+### Error Handling
 
 - Invalid action values return `400 Bad Request`.
 - Upstream integration failures are propagated as API errors.
 
-# Supported Actions
+## Supported Actions
 
 Both action names and action IDs are accepted in the `action` query parameter.
 
-## github.repository.get
+### github.repository.get
 
 - Name: `GetGitHubRepository`
 - ID: `github.repository.get`
@@ -156,7 +156,7 @@ GET /Actions?action=github.repository.get&username=hmlendea&repository=narivia
 }
 ```
 
-## github.repository.file.get
+### github.repository.file.get
 
 - Name: `GetGitHubRepositoryFile`
 - ID: `github.repository.file.get`
@@ -178,7 +178,7 @@ GET /Actions?action=github.repository.file.get&username=hmlendea&repository=gpta
 "# Overview\n..."
 ```
 
-## github.repository.readme.get
+### github.repository.readme.get
 
 - Name: `GetGitHubRepositoryReadme`
 - ID: `github.repository.readme.get`
@@ -199,7 +199,7 @@ GET /Actions?action=github.repository.readme.get&username=hmlendea&repository=gp
 "# Overview\n..."
 ```
 
-## github.repository.releases.get
+### github.repository.releases.get
 
 - Name: `GetGitHubRepositoryReleases`
 - ID: `github.repository.releases.get`
@@ -230,7 +230,7 @@ GET /Actions?action=github.repository.releases.get&username=hmlendea&repository=
 ]
 ```
 
-## github.user.repositories.get
+### github.user.repositories.get
 
 - Name: `GetGitHubUserRepositories`
 - ID: `github.user.repositories.get`
@@ -263,7 +263,7 @@ GET /Actions?action=github.user.repositories.get&username=hmlendea
 ]
 ```
 
-## personallogmanager.logs.get
+### personallogmanager.logs.get
 
 - Name: `GetPersonalLogs`
 - ID: `personallogmanager.logs.get`
@@ -294,7 +294,7 @@ GET /Actions?action=personallogmanager.logs.get&date_beginning=2026-03-12&date_e
 }
 ```
 
-## steam.store.app.get
+### steam.store.app.get
 
 - Name: `GetSteamAppData`
 - ID: `steam.store.app.get`
@@ -317,12 +317,47 @@ GET /Actions?action=steam.store.app.get&appId=730
 }
 ```
 
-# Release
+## Development
 
-Use the helper script:
+### Build
 
 ```bash
-./release.sh v1.0.0
+dotnet build
 ```
 
-It delegates to the shared release script maintained in `hmlendea/deployment-scripts`.
+### Run
+
+```bash
+dotnet run
+```
+
+By default the application enables HTTPS redirection, static files, default files, request logging, header validation, and replay protection middleware.
+
+### Release
+
+The repository includes `release.sh`, which delegates to the upstream deployment script used by the project maintainer.
+
+```bash
+bash ./release.sh 1.0.0
+```
+
+This script downloads and executes an external release helper from: `https://raw.githubusercontent.com/hmlendea/deployment-scripts/master/release/dotnet/10.0.sh`
+
+**Note:** Piping into `bash` is an intensely controversial topic. Please review any external scripts before running them in your environment!
+
+## Contributing
+
+Contributions are welcome.
+
+Please:
+
+- keep the changes cross-platform
+- keep the existing public API intact, unless a breaking change is intentional
+- keep the pull requests focused and consistent with the existing style
+- update the documentation when the behaviour changes
+- add or update the tests for any new behaviour
+
+### License
+
+Licensed under the GNU General Public License v3.0 or later.
+See [LICENSE](./LICENSE) for details.
