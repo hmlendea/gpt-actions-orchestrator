@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NuciAPI.Middleware;
+using NuciAPI.Middleware.ExceptionHandling;
+using NuciAPI.Middleware.Logging;
+using NuciAPI.Middleware.Security;
 
 namespace GptActionsOrchestrator
 {
@@ -16,7 +19,6 @@ namespace GptActionsOrchestrator
             services.AddControllers();
 
             services
-                .AddNuciApiReplayProtection()
                 .AddConfigurations(Configuration)
                 .AddCustomServices();
         }
