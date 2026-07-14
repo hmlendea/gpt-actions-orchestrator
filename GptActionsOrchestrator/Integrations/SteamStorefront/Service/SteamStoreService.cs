@@ -2,26 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+
 using GptActionsOrchestrator.Integrations.SteamStorefront.Service.Models;
 using GptActionsOrchestrator.Logging;
+
 using NuciLog.Core;
 using NuciWeb.HTTP;
 
 namespace GptActionsOrchestrator.Integrations.SteamStorefront.Service
 {
-    public class SteamStoreService(ILogger logger) : ISteamStoreService
+    public sealed class SteamStoreService(ILogger logger) : ISteamStoreService
     {
-        const string StorefrontApiUrl = "http://store.steampowered.com/api";
-        const string StorefrontApiCountry = "RO";
-        const string StorefrontApiFilters = "basic";
+        private static string StorefrontApiUrl => "http://store.steampowered.com/api";
+        private static string StorefrontApiCountry => "RO";
+        private static string StorefrontApiFilters => "basic";
+        private static string AppNamePattern => "\"name\": *\"([^\"]*)\"";
 
-        readonly HttpClient httpClient = HttpClientCreator.Create();
-        readonly ILogger logger = logger;
+        private readonly HttpClient httpClient = HttpClientCreator.Create();
 
         public SteamAppEntity GetAppData(string appId)
         {
-            const string namePattern = "\"name\": *\"([^\"]*)\"";
-
             IEnumerable<LogInfo> logInfos =
             [
                 new(MyLogInfoKey.AppId, appId)
@@ -42,7 +42,7 @@ namespace GptActionsOrchestrator.Integrations.SteamStorefront.Service
                 steamAppEntity = new()
                 {
                     Id = appId,
-                    Name = Regex.Match(responseContent, namePattern).Groups[1].Value
+                    Name = Regex.Match(responseContent, AppNamePattern).Groups[1].Value
                 };
             }
             catch (Exception exception)

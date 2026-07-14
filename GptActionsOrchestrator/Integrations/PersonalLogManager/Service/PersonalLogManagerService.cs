@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
+
 using GptActionsOrchestrator.Configuration;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Client;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Configuration;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service.Models;
 using GptActionsOrchestrator.Logging;
+
 using NuciAPI.Client;
 using NuciAPI.Responses;
 using NuciLog.Core;
@@ -14,11 +16,14 @@ using NuciLog.Core;
 namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
 {
     public sealed class PersonalLogManagerService(
-        PersonalLogManagerSettings plmSettings,
+        PersonalLogManagerSettings personalLogManagerSettings,
         SecuritySettings securitySettings,
         ILogger logger) : IPersonalLogManagerService
     {
-        readonly NuciApiClient client = new(plmSettings.BaseUrl);
+        private static string DefaultLocalisation => "ro";
+        private static int DefaultCount => 1000;
+
+        private readonly NuciApiClient client = new(personalLogManagerSettings.BaseUrl);
 
         public PersonalLogs GetPersonalLogs(
             string dateBeginning,
@@ -71,7 +76,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             }
         }
 
-        PersonalLogs RetrievePersonalLogs(
+        private PersonalLogs RetrievePersonalLogs(
             string dateBeginning,
             string dateEnd,
             string template,
@@ -82,8 +87,8 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             NuciApiRequestAuthorisationInfo authorisation = new()
             {
                 ClientId = securitySettings.ClientId,
-                BearerToken = plmSettings.ApiKey,
-                HmacSharedSecretKey = plmSettings.HmacSigningKey
+                BearerToken = personalLogManagerSettings.ApiKey,
+                HmacSharedSecretKey = personalLogManagerSettings.HmacSigningKey
             };
 
             NuciApiResponse response =
@@ -104,7 +109,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             };
         }
 
-        GetPersonalLogsRequest BuildRequest(
+        private GetPersonalLogsRequest BuildRequest(
             string dateBeginning,
             string dateEnd,
             string template,
@@ -117,19 +122,16 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
                 Date = BuildDateRangeRegex(dateBeginning, dateEnd),
                 Template = template,
                 Localisation = localisation,
-                Data = data
+                Data = data,
+                Count = DefaultCount
             };
 
             if (string.IsNullOrWhiteSpace(localisation))
             {
-                request.Localisation = "ro";
+                request.Localisation = DefaultLocalisation;
             }
 
-            if (string.IsNullOrWhiteSpace(count))
-            {
-                request.Count = 1000;
-            }
-            else
+            if (!string.IsNullOrWhiteSpace(count))
             {
                 request.Count = int.Parse(count);
             }
@@ -150,6 +152,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
             List<string> dates = [];
 
             DateOnly current = start;
+
             while (current <= end)
             {
                 dates.Add(current.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));

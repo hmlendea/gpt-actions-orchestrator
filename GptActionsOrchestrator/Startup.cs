@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
 using NuciAPI.Middleware.ExceptionHandling;
 using NuciAPI.Middleware.Logging;
 using NuciAPI.Middleware.Security;
 
 namespace GptActionsOrchestrator
 {
-    public class Startup(IConfiguration configuration)
+    public sealed class Startup(IConfiguration configuration)
     {
         public IConfiguration Configuration => configuration;
 

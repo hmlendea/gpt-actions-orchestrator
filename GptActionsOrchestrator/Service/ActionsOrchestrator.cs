@@ -76,7 +76,7 @@ namespace GptActionsOrchestrator.Service
             };
         }
 
-        TObject GetParameter<TObject>(Dictionary<string, object> parameters, string key)
+        private TObject GetParameter<TObject>(Dictionary<string, object> parameters, string key)
         {
             if (parameters.TryGetValue(key, out object value) && value is TObject typedValue)
             {
@@ -86,7 +86,7 @@ namespace GptActionsOrchestrator.Service
             return default;
         }
 
-        Dictionary<string, object> BuildParameters(Dictionary<string, string> rawParameters)
+        private Dictionary<string, object> BuildParameters(Dictionary<string, string> rawParameters)
         {
             Dictionary<string, object> parameters = [];
 
@@ -114,7 +114,7 @@ namespace GptActionsOrchestrator.Service
             return parameters;
         }
 
-        GptAction GetGptActionFromParameters(Dictionary<string, string> parameters)
+        private GptAction GetGptActionFromParameters(Dictionary<string, string> parameters)
         {
             if (parameters.TryGetValue("action", out string actionName))
             {

@@ -6,7 +6,7 @@ namespace GptActionsOrchestrator.Service.Models
 {
     public class GptAction : IEquatable<GptAction>
     {
-        static readonly Dictionary<string, GptAction> values = new()
+        private static readonly Dictionary<string, GptAction> values = new()
         {
             { nameof(Unknown), new GptAction("unknown", nameof(Unknown)) },
             { nameof(GetGitHubRepository), new GptAction("github.repository.get", nameof(GetGitHubRepository)) },
@@ -22,7 +22,7 @@ namespace GptActionsOrchestrator.Service.Models
 
         public string Name { get; }
 
-        GptAction(string id, string name)
+        private GptAction(string id, string name)
         {
             Id = id;
             Name = name;

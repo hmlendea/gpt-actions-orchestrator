@@ -1,7 +1,10 @@
 using System.Linq;
+
 using Microsoft.AspNetCore.Mvc;
+
 using NuciAPI.Controllers;
 using NuciAPI.Responses;
+
 using GptActionsOrchestrator.Api.Requests;
 using GptActionsOrchestrator.Configuration;
 using GptActionsOrchestrator.Service;
@@ -15,7 +18,7 @@ namespace GptActionsOrchestrator.Api.Controllers
         IActionsOrchestrator actionsOrchestrator,
         SecuritySettings securitySettings) : NuciApiController
     {
-        readonly NuciApiAuthorisation authorisation = NuciApiAuthorisation.ApiKey(securitySettings.ApiKey);
+        private readonly NuciApiAuthorisation authorisation = NuciApiAuthorisation.ApiKey(securitySettings.ApiKey);
 
         [HttpGet]
         public ActionResult Get([FromQuery] GetActionRequest request)
