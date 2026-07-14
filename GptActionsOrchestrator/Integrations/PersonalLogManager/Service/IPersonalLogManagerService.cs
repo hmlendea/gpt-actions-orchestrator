@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service.Models;
 
 namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service

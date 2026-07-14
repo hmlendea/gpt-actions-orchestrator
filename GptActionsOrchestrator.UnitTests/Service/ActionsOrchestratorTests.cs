@@ -19,10 +19,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
     [TestFixture]
     public sealed class ActionsOrchestratorTests
     {
-        private IGitHubService gitHubService;
-        private IPersonalLogManagerService personalLogManagerService;
-        private ISteamStoreService steamStoreService;
-        private ActionsOrchestrator orchestrator;
+        IGitHubService gitHubService;
+        IPersonalLogManagerService personalLogManagerService;
+        ISteamStoreService steamStoreService;
+        ActionsOrchestrator orchestrator;
 
         [SetUp]
         public void SetUp()
@@ -33,8 +33,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             orchestrator = new ActionsOrchestrator(gitHubService, personalLogManagerService, steamStoreService);
         }
 
+        // ── GetGitHubRepository ───────────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetGitHubRepository_ReturnsResponseWithCorrectActionName()
+        public void GivenGetGitHubRepositoryParameters_WhenGetIsCalled_ThenResponseContainsCorrectActionName()
         {
             gitHubService.GetRepository(Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new GitHubRepository());
@@ -50,7 +52,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetGitHubRepository_CallsGitHubServiceWithCorrectParameters()
+        public void GivenGetGitHubRepositoryParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectParameters()
         {
             gitHubService.GetRepository(Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new GitHubRepository());
@@ -66,7 +68,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetGitHubRepository_ReturnsRepositoryDataInResponse()
+        public void GivenGetGitHubRepositoryParameters_WhenGetIsCalled_ThenResponseDataContainsRepository()
         {
             GitHubRepository expectedRepository = new() { Name = "test-repo", Language = "C#" };
             gitHubService.GetRepository("IlarionPintilie", "test-repo")
@@ -82,8 +84,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(response.Data, Is.EqualTo(expectedRepository));
         }
 
+        // ── GetGitHubRepositoryFile ───────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetGitHubRepositoryFile_CallsGitHubServiceWithCorrectParameters()
+        public void GivenGetGitHubRepositoryFileParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectParameters()
         {
             gitHubService.GetRepositoryFile(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(string.Empty);
@@ -100,7 +104,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetGitHubRepositoryFile_ReturnsFileContentInResponse()
+        public void GivenGetGitHubRepositoryFileParameters_WhenGetIsCalled_ThenResponseDataContainsFileContent()
         {
             string expectedContent = "using System;";
             gitHubService.GetRepositoryFile("IlarionPintilie", "test-repo", "src/Program.cs")
@@ -117,8 +121,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(response.Data, Is.EqualTo(expectedContent));
         }
 
+        // ── GetGitHubRepositoryReadme ─────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetGitHubRepositoryReadme_CallsGetRepositoryFileWithReadmeMdPath()
+        public void GivenGetGitHubRepositoryReadmeParameters_WhenGetIsCalled_ThenGetRepositoryFileIsCalledWithReadmeMdPath()
         {
             gitHubService.GetRepositoryFile(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
                 .Returns(string.Empty);
@@ -134,7 +140,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetGitHubRepositoryReadme_ReturnsReadmeContentInResponse()
+        public void GivenGetGitHubRepositoryReadmeParameters_WhenGetIsCalled_ThenResponseDataContainsReadmeContent()
         {
             string expectedReadme = "# Test Repo";
             gitHubService.GetRepositoryFile("IlarionPintilie", "test-repo", "README.md")
@@ -150,8 +156,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(response.Data, Is.EqualTo(expectedReadme));
         }
 
+        // ── GetGitHubRepositoryReleases ───────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetGitHubRepositoryReleases_CallsGitHubServiceWithCorrectParameters()
+        public void GivenGetGitHubRepositoryReleasesParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectParameters()
         {
             gitHubService.GetRepositoryReleases(Arg.Any<string>(), Arg.Any<string>())
                 .Returns(new List<GitHubRelease>());
@@ -167,7 +175,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetGitHubRepositoryReleases_ReturnsReleasesInResponse()
+        public void GivenGetGitHubRepositoryReleasesParameters_WhenGetIsCalled_ThenResponseDataContainsReleases()
         {
             List<GitHubRelease> expectedReleases = new() { new() { Name = "v1.0.0", TagName = "v1.0.0" } };
             gitHubService.GetRepositoryReleases("IlarionPintilie", "test-repo")
@@ -183,8 +191,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(response.Data, Is.EqualTo(expectedReleases));
         }
 
+        // ── GetGitHubUserRepositories ─────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetGitHubUserRepositories_CallsGitHubServiceWithCorrectUsername()
+        public void GivenGetGitHubUserRepositoriesParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectUsername()
         {
             gitHubService.GetUserRepositories(Arg.Any<string>())
                 .Returns(new List<GitHubRepository>());
@@ -199,7 +209,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetGitHubUserRepositories_ReturnsRepositoriesInResponse()
+        public void GivenGetGitHubUserRepositoriesParameters_WhenGetIsCalled_ThenResponseDataContainsRepositories()
         {
             List<GitHubRepository> expectedRepositories = new() { new() { Name = "my-repo", Language = "C#" } };
             gitHubService.GetUserRepositories("IlarionPintilie")
@@ -214,8 +224,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(response.Data, Is.EqualTo(expectedRepositories));
         }
 
+        // ── GetPersonalLogs ───────────────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetPersonalLogs_CallsPersonalLogManagerServiceWithCorrectParameters()
+        public void GivenGetPersonalLogsParameters_WhenGetIsCalled_ThenPersonalLogManagerServiceIsCalledWithCorrectParameters()
         {
             personalLogManagerService.GetPersonalLogs(
                 Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(),
@@ -242,7 +254,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetPersonalLogs_ReturnsPersonalLogsInResponse()
+        public void GivenGetPersonalLogsParameters_WhenGetIsCalled_ThenResponseDataContainsPersonalLogs()
         {
             PersonalLogs expectedLogs = new() { Logs = new() { "Log entry 1", "Log entry 2" } };
             personalLogManagerService.GetPersonalLogs(
@@ -264,7 +276,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetPersonalLogsWithNestedDataParameters_PassesDataDictionaryToService()
+        public void GivenGetPersonalLogsWithNestedDataParameters_WhenGetIsCalled_ThenDataDictionaryIsPassedToService()
         {
             Dictionary<string, string> capturedData = null;
             personalLogManagerService.GetPersonalLogs(
@@ -291,8 +303,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(capturedData["energy"], Is.EqualTo("high"));
         }
 
+        // ── GetSteamAppData ───────────────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsGetSteamAppData_CallsSteamStoreServiceWithCorrectAppId()
+        public void GivenGetSteamAppDataParameters_WhenGetIsCalled_ThenSteamStoreServiceIsCalledWithCorrectAppId()
         {
             steamStoreService.GetAppData(Arg.Any<string>())
                 .Returns(new SteamAppEntity());
@@ -307,7 +321,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsGetSteamAppData_ReturnsSteamAppEntityInResponse()
+        public void GivenGetSteamAppDataParameters_WhenGetIsCalled_ThenResponseDataContainsSteamAppEntity()
         {
             SteamAppEntity expectedApp = new() { Id = "613", Name = "Solaire's Quest" };
             steamStoreService.GetAppData("613")
@@ -322,8 +336,10 @@ namespace GptActionsOrchestrator.UnitTests.Service
             Assert.That(response.Data, Is.EqualTo(expectedApp));
         }
 
+        // ── Unknown / missing action ──────────────────────────────────────────
+
         [Test]
-        public void Get_WhenActionIsUnknown_ThrowsNotImplementedException()
+        public void GivenUnknownActionName_WhenGetIsCalled_ThenNotImplementedExceptionIsThrown()
         {
             Assert.That(
                 () => orchestrator.Get(new Dictionary<string, string>
@@ -334,7 +350,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionParameterIsAbsent_ThrowsNotImplementedException()
+        public void GivenMissingActionParameter_WhenGetIsCalled_ThenNotImplementedExceptionIsThrown()
         {
             Assert.That(
                 () => orchestrator.Get(new Dictionary<string, string>()),
@@ -342,7 +358,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         }
 
         [Test]
-        public void Get_WhenActionIsSpecifiedByActionId_CorrectlyDispatchesToService()
+        public void GivenActionSpecifiedById_WhenGetIsCalled_ThenCorrectServiceIsDispatched()
         {
             GitHubRepository expectedRepository = new() { Name = "test-repo" };
             gitHubService.GetRepository(Arg.Any<string>(), Arg.Any<string>())

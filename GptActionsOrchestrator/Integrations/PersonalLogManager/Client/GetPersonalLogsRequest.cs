@@ -4,7 +4,7 @@ using NuciSecurity.HMAC;
 
 namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Client
 {
-    public class GetPersonalLogsRequest : NuciApiRequest
+    public sealed class GetPersonalLogsRequest : NuciApiRequest
     {
         [HmacOrder(1)]
         public string Date { get; set; }

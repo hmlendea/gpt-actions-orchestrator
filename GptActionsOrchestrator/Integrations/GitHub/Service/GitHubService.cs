@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+
 using GptActionsOrchestrator.Integrations.GitHub.Configuration;
 using GptActionsOrchestrator.Integrations.GitHub.Service.Models;
 using GptActionsOrchestrator.Logging;
+
 using NuciExtensions;
 using NuciLog.Core;
 using NuciWeb.HTTP;
@@ -14,21 +16,23 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
 {
     public sealed class GitHubService(GitHubSettings gitHubSettings, ILogger logger) : IGitHubService
     {
-        static string ApiBaseUrl => "https://api.github.com";
-        static string ApiVersion => "2022-11-28";
+        private static string ApiBaseUrl => "https://api.github.com";
+        private static string ApiVersion => "2022-11-28";
 
-        readonly HttpClient httpClient = CreateHttpClient(gitHubSettings);
-        readonly ILogger logger = logger;
+        private readonly HttpClient httpClient = CreateHttpClient(gitHubSettings);
 
-        public IReadOnlyCollection<GitHubRepository> GetUserRepositories(string username)
+        public IEnumerable<GitHubRepository> GetUserRepositories(string username)
         {
-            bool isAuthenticatedUser =
+            bool isAuthenticatedUserRequested =
                 string.IsNullOrWhiteSpace(username) ||
                 string.Equals(username, gitHubSettings.Username, StringComparison.OrdinalIgnoreCase);
 
-            string effectiveUsername = isAuthenticatedUser
-                ? gitHubSettings.Username
-                : username;
+            string effectiveUsername = username;
+
+            if (isAuthenticatedUserRequested)
+            {
+                effectiveUsername = gitHubSettings.Username;
+            }
 
             IEnumerable<LogInfo> logInfos =
             [
@@ -47,9 +51,12 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
 
                 while (true)
                 {
-                    string endpoint = isAuthenticatedUser
-                        ? $"{ApiBaseUrl}/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&sort=updated&per_page=100&page={page}"
-                        : $"{ApiBaseUrl}/users/{Uri.EscapeDataString(username)}/repos?sort=updated&per_page=100&page={page}";
+                    string endpoint = $"{ApiBaseUrl}/users/{Uri.EscapeDataString(username)}/repos?sort=updated&per_page=100&page={page}";
+
+                    if (isAuthenticatedUserRequested)
+                    {
+                        endpoint = $"{ApiBaseUrl}/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&sort=updated&per_page=100&page={page}";
+                    }
 
                     List<GitHubRepository> pageItems = httpClient
                         .GetStringAsync(endpoint).Result
@@ -61,7 +68,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
                     }
 
                     repositories.AddRange(pageItems);
-                    page++;
+                    page += 1;
                 }
 
                 logger.Debug(
@@ -88,13 +95,16 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             string username,
             string repositoryName)
         {
-            bool isAuthenticatedUser =
+            bool isAuthenticatedUserRequested =
                 string.IsNullOrWhiteSpace(username) ||
                 string.Equals(username, gitHubSettings.Username, StringComparison.OrdinalIgnoreCase);
 
-            string effectiveUsername = isAuthenticatedUser
-                ? gitHubSettings.Username
-                : username;
+            string effectiveUsername = username;
+
+            if (isAuthenticatedUserRequested)
+            {
+                effectiveUsername = gitHubSettings.Username;
+            }
 
             IEnumerable<LogInfo> logInfos =
             [
@@ -137,7 +147,10 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             }
         }
 
-        public string GetRepositoryFile(string username, string repositoryName, string path)
+        public string GetRepositoryFile(
+            string username,
+            string repositoryName,
+            string path)
         {
             IEnumerable<LogInfo> logInfos =
             [
@@ -190,7 +203,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             }
         }
 
-        public IReadOnlyCollection<GitHubRelease> GetRepositoryReleases(
+        public IEnumerable<GitHubRelease> GetRepositoryReleases(
             string username,
             string repositoryName)
         {
@@ -228,7 +241,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
                     }
 
                     releases.AddRange(pageItems);
-                    page++;
+                    page += 1;
                 }
 
                 logger.Debug(
@@ -251,7 +264,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             }
         }
 
-        static HttpClient CreateHttpClient(GitHubSettings gitHubSettings)
+        private static HttpClient CreateHttpClient(GitHubSettings settings)
         {
             HttpClient client = HttpClientCreator.Create();
 
@@ -259,10 +272,10 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
             client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", ApiVersion);
 
-            if (!string.IsNullOrWhiteSpace(gitHubSettings.ApiKey))
+            if (!string.IsNullOrWhiteSpace(settings.ApiKey))
             {
                 client.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", gitHubSettings.ApiKey);
+                    new AuthenticationHeaderValue("Bearer", settings.ApiKey);
             }
 
             return client;

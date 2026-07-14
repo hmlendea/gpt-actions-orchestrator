@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+
 using GptActionsOrchestrator.Integrations.GitHub.Service.Models;
 
 namespace GptActionsOrchestrator.Integrations.GitHub.Service
@@ -10,7 +11,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
         /// </summary>
         /// <param name="username">The username of the GitHub user.</param>
         /// <returns>A read-only collection of GitHub repositories.</returns>
-        IReadOnlyCollection<GitHubRepository> GetUserRepositories(
+        IEnumerable<GitHubRepository> GetUserRepositories(
             string username);
 
         /// <summary>
@@ -41,7 +42,7 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
         /// <param name="username">The username of the GitHub user.</param>
         /// <param name="repositoryName">The name of the repository.</param>
         /// <returns>A read-only collection of GitHub releases.</returns>
-        IReadOnlyCollection<GitHubRelease> GetRepositoryReleases(
+        IEnumerable<GitHubRelease> GetRepositoryReleases(
             string username,
             string repositoryName);
     }

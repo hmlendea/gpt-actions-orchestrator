@@ -9,6 +9,8 @@ namespace GptActionsOrchestrator.UnitTests.Service.Models
     [TestFixture]
     public sealed class GptActionTests
     {
+        // ── FromString ────────────────────────────────────────────────────────
+
         [TestCase("Unknown")]
         [TestCase("GetGitHubRepository")]
         [TestCase("GetGitHubRepositoryFile")]
@@ -17,7 +19,7 @@ namespace GptActionsOrchestrator.UnitTests.Service.Models
         [TestCase("GetGitHubUserRepositories")]
         [TestCase("GetPersonalLogs")]
         [TestCase("GetSteamAppData")]
-        public void FromString_WhenCalledWithValidName_ReturnsActionWithMatchingName(string name)
+        public void GivenValidActionName_WhenFromStringIsCalled_ThenMatchingActionIsReturned(string name)
         {
             GptAction result = GptAction.FromString(name);
 
@@ -32,7 +34,7 @@ namespace GptActionsOrchestrator.UnitTests.Service.Models
         [TestCase("github.user.repositories.get")]
         [TestCase("personallogmanager.logs.get")]
         [TestCase("steam.store.app.get")]
-        public void FromString_WhenCalledWithValidId_ReturnsActionWithMatchingId(string id)
+        public void GivenValidActionId_WhenFromStringIsCalled_ThenMatchingActionIsReturned(string id)
         {
             GptAction result = GptAction.FromString(id);
 
@@ -42,141 +44,11 @@ namespace GptActionsOrchestrator.UnitTests.Service.Models
         [TestCase("solaire_of_astora")]
         [TestCase("GetUnknownAction")]
         [TestCase("")]
-        public void FromString_WhenCalledWithUnrecognisedValue_ReturnsUnknown(string value)
+        public void GivenUnrecognisedValue_WhenFromStringIsCalled_ThenUnknownActionIsReturned(string value)
         {
             GptAction result = GptAction.FromString(value);
 
             Assert.That(result, Is.EqualTo(GptAction.Unknown));
-        }
-
-        [Test]
-        public void Equals_WhenCalledWithSameInstance_ReturnsTrue()
-        {
-            GptAction action = GptAction.GetGitHubRepository;
-
-            Assert.That(action.Equals(action), Is.True);
-        }
-
-        [Test]
-        public void Equals_WhenCalledWithEquivalentActionFromFromString_ReturnsTrue()
-        {
-            GptAction first = GptAction.GetGitHubRepository;
-            GptAction second = GptAction.FromString("GetGitHubRepository");
-
-            Assert.That(first.Equals(second), Is.True);
-        }
-
-        [Test]
-        public void Equals_WhenCalledWithDifferentAction_ReturnsFalse()
-        {
-            GptAction first = GptAction.GetGitHubRepository;
-            GptAction second = GptAction.GetGitHubRepositoryFile;
-
-            Assert.That(first.Equals(second), Is.False);
-        }
-
-        [Test]
-        public void Equals_WhenCalledWithNullGptAction_ReturnsFalse()
-        {
-            GptAction action = GptAction.GetGitHubRepository;
-
-            Assert.That(action.Equals((GptAction)null), Is.False);
-        }
-
-        [Test]
-        public void Equals_WhenCalledWithNullObject_ReturnsFalse()
-        {
-            GptAction action = GptAction.GetGitHubRepository;
-
-            Assert.That(action.Equals((object)null), Is.False);
-        }
-
-        [Test]
-        public void Equals_WhenCalledWithObjectOfDifferentType_ReturnsFalse()
-        {
-            GptAction action = GptAction.GetGitHubRepository;
-
-            Assert.That(action.Equals("GetGitHubRepository"), Is.False);
-        }
-
-        [Test]
-        public void GetHashCode_WhenCalledTwiceOnSameAction_ReturnsSameValue()
-        {
-            GptAction action = GptAction.GetGitHubRepository;
-            int firstHash = action.GetHashCode();
-            int secondHash = action.GetHashCode();
-
-            Assert.That(firstHash, Is.EqualTo(secondHash));
-        }
-
-        [Test]
-        public void GetHashCode_WhenCalledOnDifferentActions_ReturnsDifferentValues()
-        {
-            int firstHash = GptAction.GetGitHubRepository.GetHashCode();
-            int secondHash = GptAction.GetPersonalLogs.GetHashCode();
-
-            Assert.That(firstHash, Is.Not.EqualTo(secondHash));
-        }
-
-        [Test]
-        public void ToString_WhenCalled_ReturnsName()
-        {
-            GptAction action = GptAction.GetGitHubRepository;
-
-            Assert.That(action.ToString(), Is.EqualTo("GetGitHubRepository"));
-        }
-
-        [Test]
-        public void GetValues_WhenCalled_ReturnsAllEightActions()
-        {
-            Array values = GptAction.GetValues();
-
-            Assert.That(values.Length, Is.EqualTo(8));
-        }
-
-        [Test]
-        public void ImplicitStringConversion_WhenApplied_ReturnsName()
-        {
-            GptAction action = GptAction.GetPersonalLogs;
-            string actionAsString = action;
-
-            Assert.That(actionAsString, Is.EqualTo("GetPersonalLogs"));
-        }
-
-        [Test]
-        public void EqualityOperator_WhenComparingSameAction_ReturnsTrue()
-        {
-            GptAction first = GptAction.GetGitHubRepository;
-            GptAction second = GptAction.GetGitHubRepository;
-
-            Assert.That(first == second, Is.True);
-        }
-
-        [Test]
-        public void EqualityOperator_WhenComparingDifferentActions_ReturnsFalse()
-        {
-            GptAction first = GptAction.GetGitHubRepository;
-            GptAction second = GptAction.GetSteamAppData;
-
-            Assert.That(first == second, Is.False);
-        }
-
-        [Test]
-        public void InequalityOperator_WhenComparingSameAction_ReturnsFalse()
-        {
-            GptAction first = GptAction.GetGitHubRepository;
-            GptAction second = GptAction.GetGitHubRepository;
-
-            Assert.That(first != second, Is.False);
-        }
-
-        [Test]
-        public void InequalityOperator_WhenComparingDifferentActions_ReturnsTrue()
-        {
-            GptAction first = GptAction.GetGitHubRepository;
-            GptAction second = GptAction.GetSteamAppData;
-
-            Assert.That(first != second, Is.True);
         }
 
         [TestCase("Unknown", "unknown")]
@@ -187,11 +59,167 @@ namespace GptActionsOrchestrator.UnitTests.Service.Models
         [TestCase("GetGitHubUserRepositories", "github.user.repositories.get")]
         [TestCase("GetPersonalLogs", "personallogmanager.logs.get")]
         [TestCase("GetSteamAppData", "steam.store.app.get")]
-        public void StaticProperties_EachActionHasCorrectId(string name, string expectedId)
+        public void GivenActionName_WhenFromStringIsCalled_ThenCorrectIdIsReturned(string name, string expectedId)
         {
             GptAction action = GptAction.FromString(name);
 
             Assert.That(action.Id, Is.EqualTo(expectedId));
+        }
+
+        // ── GetValues ─────────────────────────────────────────────────────────
+
+        [Test]
+        public void GivenAllRegisteredActions_WhenGetValuesIsCalled_ThenEightActionsAreReturned()
+        {
+            Array values = GptAction.GetValues();
+
+            Assert.That(values, Has.Length.EqualTo(8));
+        }
+
+        // ── Equals ────────────────────────────────────────────────────────────
+
+        [Test]
+        public void GivenSameInstance_WhenEqualsIsCalled_ThenTrueIsReturned()
+        {
+            GptAction action = GptAction.GetGitHubRepository;
+
+            bool isEqual = action.Equals(action);
+
+            Assert.That(isEqual);
+        }
+
+        [Test]
+        public void GivenEquivalentAction_WhenEqualsIsCalled_ThenTrueIsReturned()
+        {
+            GptAction first = GptAction.GetGitHubRepository;
+            GptAction second = GptAction.FromString("GetGitHubRepository");
+
+            bool isEqual = first.Equals(second);
+
+            Assert.That(isEqual);
+        }
+
+        [Test]
+        public void GivenDifferentAction_WhenEqualsIsCalled_ThenFalseIsReturned()
+        {
+            GptAction first = GptAction.GetGitHubRepository;
+            GptAction second = GptAction.GetGitHubRepositoryFile;
+
+            bool isEqual = first.Equals(second);
+
+            Assert.That(isEqual, Is.False);
+        }
+
+        [Test]
+        public void GivenNullGptAction_WhenEqualsIsCalled_ThenFalseIsReturned()
+        {
+            GptAction action = GptAction.GetGitHubRepository;
+
+            bool isEqual = action.Equals((GptAction)null);
+
+            Assert.That(isEqual, Is.False);
+        }
+
+        [Test]
+        public void GivenNullObject_WhenEqualsIsCalled_ThenFalseIsReturned()
+        {
+            GptAction action = GptAction.GetGitHubRepository;
+
+            bool isEqual = action.Equals((object)null);
+
+            Assert.That(isEqual, Is.False);
+        }
+
+        [Test]
+        public void GivenObjectOfDifferentType_WhenEqualsIsCalled_ThenFalseIsReturned()
+        {
+            GptAction action = GptAction.GetGitHubRepository;
+
+            bool isEqual = action.Equals("GetGitHubRepository");
+
+            Assert.That(isEqual, Is.False);
+        }
+
+        // ── GetHashCode ───────────────────────────────────────────────────────
+
+        [Test]
+        public void GivenSameAction_WhenGetHashCodeIsCalledTwice_ThenSameValueIsReturned()
+        {
+            GptAction action = GptAction.GetGitHubRepository;
+            int firstHash = action.GetHashCode();
+            int secondHash = action.GetHashCode();
+
+            Assert.That(firstHash, Is.EqualTo(secondHash));
+        }
+
+        [Test]
+        public void GivenDifferentActions_WhenGetHashCodeIsCalled_ThenDifferentValuesAreReturned()
+        {
+            int firstHash = GptAction.GetGitHubRepository.GetHashCode();
+            int secondHash = GptAction.GetPersonalLogs.GetHashCode();
+
+            Assert.That(firstHash, Is.Not.EqualTo(secondHash));
+        }
+
+        // ── ToString ──────────────────────────────────────────────────────────
+
+        [Test]
+        public void GivenAnyAction_WhenToStringIsCalled_ThenNameIsReturned()
+        {
+            GptAction action = GptAction.GetGitHubRepository;
+
+            Assert.That(action.ToString(), Is.EqualTo("GetGitHubRepository"));
+        }
+
+        // ── Implicit string conversion ─────────────────────────────────────────
+
+        [Test]
+        public void GivenAnyAction_WhenImplicitlyConvertedToString_ThenNameIsReturned()
+        {
+            GptAction action = GptAction.GetPersonalLogs;
+            string actionAsString = action;
+
+            Assert.That(actionAsString, Is.EqualTo("GetPersonalLogs"));
+        }
+
+        // ── == operator ───────────────────────────────────────────────────────
+
+        [Test]
+        public void GivenSameAction_WhenEqualityOperatorIsApplied_ThenTrueIsReturned()
+        {
+            GptAction first = GptAction.GetGitHubRepository;
+            GptAction second = GptAction.GetGitHubRepository;
+
+            Assert.That(first == second);
+        }
+
+        [Test]
+        public void GivenDifferentActions_WhenEqualityOperatorIsApplied_ThenFalseIsReturned()
+        {
+            GptAction first = GptAction.GetGitHubRepository;
+            GptAction second = GptAction.GetSteamAppData;
+
+            Assert.That(first == second, Is.False);
+        }
+
+        // ── != operator ───────────────────────────────────────────────────────
+
+        [Test]
+        public void GivenSameAction_WhenInequalityOperatorIsApplied_ThenFalseIsReturned()
+        {
+            GptAction first = GptAction.GetGitHubRepository;
+            GptAction second = GptAction.GetGitHubRepository;
+
+            Assert.That(first != second, Is.False);
+        }
+
+        [Test]
+        public void GivenDifferentActions_WhenInequalityOperatorIsApplied_ThenTrueIsReturned()
+        {
+            GptAction first = GptAction.GetGitHubRepository;
+            GptAction second = GptAction.GetSteamAppData;
+
+            Assert.That(first != second);
         }
     }
 }

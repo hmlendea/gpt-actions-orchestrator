@@ -1,25 +1,27 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using NuciLog;
 using NuciLog.Configuration;
 using NuciLog.Core;
+
 using GptActionsOrchestrator.Configuration;
-using GptActionsOrchestrator.Service;
+using GptActionsOrchestrator.Integrations.GitHub.Configuration;
+using GptActionsOrchestrator.Integrations.GitHub.Service;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Configuration;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service;
 using GptActionsOrchestrator.Integrations.SteamStorefront.Service;
-using GptActionsOrchestrator.Integrations.GitHub.Service;
-using GptActionsOrchestrator.Integrations.GitHub.Configuration;
+using GptActionsOrchestrator.Service;
 
 namespace GptActionsOrchestrator
 {
     public static class ServiceCollectionExtensions
     {
-        static SecuritySettings securitySettings;
-        static NuciLoggerSettings loggingSettings;
+        private static SecuritySettings securitySettings;
+        private static NuciLoggerSettings loggingSettings;
 
-        static GitHubSettings gitHubSettings;
-        static PersonalLogManagerSettings personalLogManagerSettings;
+        private static GitHubSettings gitHubSettings;
+        private static PersonalLogManagerSettings personalLogManagerSettings;
 
         public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
