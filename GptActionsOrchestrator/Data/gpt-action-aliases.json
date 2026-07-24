@@ -1,0 +1,70 @@
+[
+  {
+    "id": "github.file.get",
+    "targetActionId": "github.repository.file.get"
+  },
+  {
+    "id": "github.repo.file.get",
+    "targetActionId": "github.repository.file.get"
+  },
+  {
+    "id": "github.repo.file.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.repo.get",
+    "targetActionId": "github.repository.get"
+  },
+  {
+    "id": "github.repo.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.repo.releases.get",
+    "targetActionId": "github.repository.releases.get"
+  },
+  {
+    "id": "github.repos.get",
+    "targetActionId": "github.user.repositories.get"
+  },
+  {
+    "id": "github.repositories.get",
+    "targetActionId": "github.user.repositories.get"
+  },
+  {
+    "id": "github.user.repo.file.get",
+    "targetActionId": "github.repository.file.get"
+  },
+  {
+    "id": "github.user.repo.file.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.user.repo.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.user.repo.releases.get",
+    "targetActionId": "github.repository.releases.get"
+  },
+  {
+    "id": "github.user.repository.file.get",
+    "targetActionId": "github.repository.file.get"
+  },
+  {
+    "id": "github.user.repository.file.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.user.repository.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.user.repository.releases.get",
+    "targetActionId": "github.repository.releases.get"
+  },
+  {
+    "id": "github.user.repository.get",
+    "targetActionId": "github.repository.get"
+  }
+]

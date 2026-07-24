@@ -1,17 +1,20 @@
 using System;
 using System.Collections.Generic;
 using GptActionsOrchestrator.Api.Responses;
+using GptActionsOrchestrator.DataAccess.DataObjects;
 using GptActionsOrchestrator.Integrations.GitHub.Service;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service;
 using GptActionsOrchestrator.Integrations.SteamStorefront.Service;
 using GptActionsOrchestrator.Service.Models;
+using NuciDAL.Repositories;
 
 namespace GptActionsOrchestrator.Service
 {
     public sealed class ActionsOrchestrator(
         IGitHubService gitHubService,
         IPersonalLogManagerService personalLogManagerService,
-        ISteamStoreService steamStoreService) : IActionsOrchestrator
+        ISteamStoreService steamStoreService,
+        IFileRepository<GptActionAliasDataObject> aliasesRepository) : IActionsOrchestrator
     {
         public GetActionResponse Get(Dictionary<string, string> rawParameters)
         {
@@ -116,12 +119,19 @@ namespace GptActionsOrchestrator.Service
 
         private GptAction GetGptActionFromParameters(Dictionary<string, string> parameters)
         {
-            if (parameters.TryGetValue("action", out string actionName))
+            bool theGptActionIsSpecified = parameters.TryGetValue("action", out string gptActionId);
+
+            if (!theGptActionIsSpecified)
             {
-                return GptAction.FromString(actionName);
+                return GptAction.Unknown;
             }
 
-            return GptAction.Unknown;
+            if (aliasesRepository.ContainsId(gptActionId))
+            {
+                gptActionId = aliasesRepository.Get(gptActionId).TargetActionId;
+            }
+
+            return GptAction.FromString(gptActionId);
         }
     }
 }

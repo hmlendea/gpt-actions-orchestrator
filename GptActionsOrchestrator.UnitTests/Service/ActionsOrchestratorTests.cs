@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
 
+using Moq;
+
 using NSubstitute;
+
+using NuciDAL.Repositories;
 
 using NUnit.Framework;
 
 using GptActionsOrchestrator.Api.Responses;
+using GptActionsOrchestrator.DataAccess.DataObjects;
 using GptActionsOrchestrator.Integrations.GitHub.Service;
 using GptActionsOrchestrator.Integrations.GitHub.Service.Models;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service;
@@ -22,6 +27,7 @@ namespace GptActionsOrchestrator.UnitTests.Service
         IGitHubService gitHubService;
         IPersonalLogManagerService personalLogManagerService;
         ISteamStoreService steamStoreService;
+        Mock<IFileRepository<GptActionAliasDataObject>> aliasesRepositoryMock;
         ActionsOrchestrator orchestrator;
 
         [SetUp]
@@ -30,7 +36,17 @@ namespace GptActionsOrchestrator.UnitTests.Service
             gitHubService = Substitute.For<IGitHubService>();
             personalLogManagerService = Substitute.For<IPersonalLogManagerService>();
             steamStoreService = Substitute.For<ISteamStoreService>();
-            orchestrator = new ActionsOrchestrator(gitHubService, personalLogManagerService, steamStoreService);
+            aliasesRepositoryMock = new Mock<IFileRepository<GptActionAliasDataObject>>();
+
+            orchestrator = new ActionsOrchestrator(
+                gitHubService,
+                personalLogManagerService,
+                steamStoreService,
+                aliasesRepositoryMock.Object);
+
+            aliasesRepositoryMock
+                .Setup(x => x.ContainsId(It.IsAny<string>()))
+                .Returns(false);
         }
 
         // ── GetGitHubRepository ───────────────────────────────────────────────
