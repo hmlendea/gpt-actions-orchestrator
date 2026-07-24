@@ -1,0 +1,10 @@
+[
+  {
+    "id": "github.repos.get",
+    "targetActionId": "github.user.repositories.get"
+  },
+  {
+    "id": "github.repositories.get",
+    "targetActionId": "github.user.repositories.get"
+  }
+]
