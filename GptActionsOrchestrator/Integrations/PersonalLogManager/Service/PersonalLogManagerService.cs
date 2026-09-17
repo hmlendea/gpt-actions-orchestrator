@@ -96,7 +96,7 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
                     HttpMethod.Get,
                     BuildRequest(dateBeginning, dateEnd, template, localisation, data, count),
                     authorisation,
-                    "PersonalLog").Result;
+                    "PersonalLog").GetAwaiter().GetResult();
 
             if (!response.IsSuccessful)
             {
