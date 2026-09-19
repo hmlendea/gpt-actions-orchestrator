@@ -141,6 +141,16 @@ namespace GptActionsOrchestrator.Integrations.PersonalLogManager.Service
 
         public static string BuildDateRangeRegex(string dateBeginning, string dateEnd)
         {
+            if (string.IsNullOrWhiteSpace(dateBeginning) && string.IsNullOrWhiteSpace(dateEnd))
+            {
+                return null;
+            }
+
+            if (string.IsNullOrWhiteSpace(dateBeginning) || string.IsNullOrWhiteSpace(dateEnd))
+            {
+                throw new ArgumentException("Both the beginning and end dates must be provided when filtering by date.");
+            }
+
             DateOnly start = DateOnly.ParseExact(dateBeginning, "yyyy-MM-dd", CultureInfo.InvariantCulture);
             DateOnly end = DateOnly.ParseExact(dateEnd, "yyyy-MM-dd", CultureInfo.InvariantCulture);
 
