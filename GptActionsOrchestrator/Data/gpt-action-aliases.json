@@ -4,6 +4,18 @@
     "targetActionId": "github.repository.file.get"
   },
   {
+    "id": "github.file.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.releases.get",
+    "targetActionId": "github.repository.releases.get"
+  },
+  {
     "id": "github.repo.file.get",
     "targetActionId": "github.repository.file.get"
   },
@@ -32,12 +44,20 @@
     "targetActionId": "github.user.repositories.get"
   },
   {
+    "id": "github.repository.file.readme.get",
+    "targetActionId": "github.repository.readme.get"
+  },
+  {
     "id": "github.user.repo.file.get",
     "targetActionId": "github.repository.file.get"
   },
   {
     "id": "github.user.repo.file.readme.get",
     "targetActionId": "github.repository.readme.get"
+  },
+  {
+    "id": "github.user.repo.get",
+    "targetActionId": "github.repository.get"
   },
   {
     "id": "github.user.repo.readme.get",
@@ -70,5 +90,25 @@
   {
     "id": "github.user.repository.get",
     "targetActionId": "github.repository.get"
+  },
+  {
+    "id": "personal.logs.get",
+    "targetActionId": "personallogmanager.logs.get"
+  },
+  {
+    "id": "personallogmanager.log.get",
+    "targetActionId": "personallogmanager.logs.get"
+  },
+  {
+    "id": "steam.app.data.get",
+    "targetActionId": "steam.store.app.get"
+  },
+  {
+    "id": "steam.app.get",
+    "targetActionId": "steam.store.app.get"
+  },
+  {
+    "id": "steam.store.app.data.get",
+    "targetActionId": "steam.store.app.get"
   }
 ]
