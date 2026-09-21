@@ -48,6 +48,10 @@
     "targetActionId": "github.repository.releases.get"
   },
   {
+    "id": "github.user.repos.get",
+    "targetActionId": "github.user.repositories.get"
+  },
+  {
     "id": "github.user.repository.file.get",
     "targetActionId": "github.repository.file.get"
   },

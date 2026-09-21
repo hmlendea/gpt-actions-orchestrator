@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using Moq;
 
-using NSubstitute;
+// Removed NSubstitute usage; replaced with Moq.
 
 using NuciDAL.Repositories;
 
@@ -24,24 +24,24 @@ namespace GptActionsOrchestrator.UnitTests.Service
     [TestFixture]
     public sealed class ActionsOrchestratorTests
     {
-        IGitHubService gitHubService;
-        IPersonalLogManagerService personalLogManagerService;
-        ISteamStoreService steamStoreService;
+        Mock<IGitHubService> gitHubServiceMock;
+        Mock<IPersonalLogManagerService> personalLogManagerServiceMock;
+        Mock<ISteamStoreService> steamStoreServiceMock;
         Mock<IFileRepository<GptActionAliasDataObject>> aliasesRepositoryMock;
         ActionsOrchestrator orchestrator;
 
         [SetUp]
         public void SetUp()
         {
-            gitHubService = Substitute.For<IGitHubService>();
-            personalLogManagerService = Substitute.For<IPersonalLogManagerService>();
-            steamStoreService = Substitute.For<ISteamStoreService>();
+            gitHubServiceMock = new Mock<IGitHubService>();
+            personalLogManagerServiceMock = new Mock<IPersonalLogManagerService>();
+            steamStoreServiceMock = new Mock<ISteamStoreService>();
             aliasesRepositoryMock = new Mock<IFileRepository<GptActionAliasDataObject>>();
 
             orchestrator = new ActionsOrchestrator(
-                gitHubService,
-                personalLogManagerService,
-                steamStoreService,
+                gitHubServiceMock.Object,
+                personalLogManagerServiceMock.Object,
+                steamStoreServiceMock.Object,
                 aliasesRepositoryMock.Object);
 
             aliasesRepositoryMock
@@ -54,7 +54,8 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetGitHubRepositoryParameters_WhenGetIsCalled_ThenResponseContainsCorrectActionName()
         {
-            gitHubService.GetRepository(Arg.Any<string>(), Arg.Any<string>())
+            gitHubServiceMock
+                .Setup(x => x.GetRepository(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(new GitHubRepository());
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -70,7 +71,8 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetGitHubRepositoryParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectParameters()
         {
-            gitHubService.GetRepository(Arg.Any<string>(), Arg.Any<string>())
+            gitHubServiceMock
+                .Setup(x => x.GetRepository(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(new GitHubRepository());
 
             orchestrator.Get(new Dictionary<string, string>
@@ -80,14 +82,18 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "repository", "test-repo" }
             });
 
-            gitHubService.Received(1).GetRepository("IlarionPintilie", "test-repo");
+            gitHubServiceMock.Verify(
+                x => x.GetRepository("IlarionPintilie", "test-repo"),
+                Times.Once);
         }
 
         [Test]
         public void GivenGetGitHubRepositoryParameters_WhenGetIsCalled_ThenResponseDataContainsRepository()
         {
             GitHubRepository expectedRepository = new() { Name = "test-repo", Language = "C#" };
-            gitHubService.GetRepository("IlarionPintilie", "test-repo")
+
+            gitHubServiceMock
+                .Setup(x => x.GetRepository("IlarionPintilie", "test-repo"))
                 .Returns(expectedRepository);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -105,7 +111,11 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetGitHubRepositoryFileParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectParameters()
         {
-            gitHubService.GetRepositoryFile(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            gitHubServiceMock
+                .Setup(x => x.GetRepositoryFile(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
                 .Returns(string.Empty);
 
             orchestrator.Get(new Dictionary<string, string>
@@ -116,14 +126,24 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "path", "src/Program.cs" }
             });
 
-            gitHubService.Received(1).GetRepositoryFile("IlarionPintilie", "test-repo", "src/Program.cs");
+            gitHubServiceMock.Verify(
+                x => x.GetRepositoryFile(
+                    "IlarionPintilie",
+                    "test-repo",
+                    "src/Program.cs"),
+                Times.Once);
         }
 
         [Test]
         public void GivenGetGitHubRepositoryFileParameters_WhenGetIsCalled_ThenResponseDataContainsFileContent()
         {
             string expectedContent = "using System;";
-            gitHubService.GetRepositoryFile("IlarionPintilie", "test-repo", "src/Program.cs")
+
+            gitHubServiceMock
+                .Setup(x => x.GetRepositoryFile(
+                    "IlarionPintilie",
+                    "test-repo",
+                    "src/Program.cs"))
                 .Returns(expectedContent);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -142,7 +162,11 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetGitHubRepositoryReadmeParameters_WhenGetIsCalled_ThenGetRepositoryFileIsCalledWithReadmeMdPath()
         {
-            gitHubService.GetRepositoryFile(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>())
+            gitHubServiceMock
+                .Setup(x => x.GetRepositoryFile(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
                 .Returns(string.Empty);
 
             orchestrator.Get(new Dictionary<string, string>
@@ -152,14 +176,24 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "repository", "test-repo" }
             });
 
-            gitHubService.Received(1).GetRepositoryFile("IlarionPintilie", "test-repo", "README.md");
+            gitHubServiceMock.Verify(
+                x => x.GetRepositoryFile(
+                    "IlarionPintilie",
+                    "test-repo",
+                    "README.md"),
+                Times.Once  );
         }
 
         [Test]
         public void GivenGetGitHubRepositoryReadmeParameters_WhenGetIsCalled_ThenResponseDataContainsReadmeContent()
         {
             string expectedReadme = "# Test Repo";
-            gitHubService.GetRepositoryFile("IlarionPintilie", "test-repo", "README.md")
+
+            gitHubServiceMock
+                .Setup(x => x.GetRepositoryFile(
+                    "IlarionPintilie",
+                    "test-repo",
+                    "README.md"))
                 .Returns(expectedReadme);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -177,8 +211,11 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetGitHubRepositoryReleasesParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectParameters()
         {
-            gitHubService.GetRepositoryReleases(Arg.Any<string>(), Arg.Any<string>())
-                .Returns(new List<GitHubRelease>());
+            gitHubServiceMock
+                .Setup(x => x.GetRepositoryReleases(
+                    It.IsAny<string>(),
+                    It.IsAny<string>()))
+                .Returns([]);
 
             orchestrator.Get(new Dictionary<string, string>
             {
@@ -187,14 +224,14 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "repository", "test-repo" }
             });
 
-            gitHubService.Received(1).GetRepositoryReleases("IlarionPintilie", "test-repo");
+            gitHubServiceMock.Verify(x => x.GetRepositoryReleases("IlarionPintilie", "test-repo"), Times.Once);
         }
 
         [Test]
         public void GivenGetGitHubRepositoryReleasesParameters_WhenGetIsCalled_ThenResponseDataContainsReleases()
         {
-            List<GitHubRelease> expectedReleases = new() { new() { Name = "v1.0.0", TagName = "v1.0.0" } };
-            gitHubService.GetRepositoryReleases("IlarionPintilie", "test-repo")
+            List<GitHubRelease> expectedReleases = [new() { Name = "v1.0.0", TagName = "v1.0.0" }];
+            gitHubServiceMock.GetRepositoryReleases("IlarionPintilie", "test-repo")
                 .Returns(expectedReleases);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -212,8 +249,9 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetGitHubUserRepositoriesParameters_WhenGetIsCalled_ThenGitHubServiceIsCalledWithCorrectUsername()
         {
-            gitHubService.GetUserRepositories(Arg.Any<string>())
-                .Returns(new List<GitHubRepository>());
+            gitHubServiceMock
+                .Setup(x => x.GetUserRepositories(It.IsAny<string>()))
+                .Returns([]);
 
             orchestrator.Get(new Dictionary<string, string>
             {
@@ -221,14 +259,21 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "username", "IlarionPintilie" }
             });
 
-            gitHubService.Received(1).GetUserRepositories("IlarionPintilie");
+            gitHubServiceMock.Verify(
+                x => x.GetUserRepositories("IlarionPintilie"),
+                Times.Once);
         }
 
         [Test]
         public void GivenGetGitHubUserRepositoriesParameters_WhenGetIsCalled_ThenResponseDataContainsRepositories()
         {
-            List<GitHubRepository> expectedRepositories = new() { new() { Name = "my-repo", Language = "C#" } };
-            gitHubService.GetUserRepositories("IlarionPintilie")
+            List<GitHubRepository> expectedRepositories =
+            [
+                new() { Name = "my-repo", Language = "C#" }
+            ];
+
+            gitHubServiceMock
+                .Setup(x => x.GetUserRepositories("IlarionPintilie"))
                 .Returns(expectedRepositories);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -245,9 +290,14 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetPersonalLogsParameters_WhenGetIsCalled_ThenPersonalLogManagerServiceIsCalledWithCorrectParameters()
         {
-            personalLogManagerService.GetPersonalLogs(
-                Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(),
-                Arg.Any<string>(), Arg.Any<Dictionary<string, string>>(), Arg.Any<string>())
+            personalLogManagerServiceMock
+                .Setup(x => x.GetPersonalLogs(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<string>()))
                 .Returns(new PersonalLogs());
 
             orchestrator.Get(new Dictionary<string, string>
@@ -260,22 +310,33 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "count", "613" }
             });
 
-            personalLogManagerService.Received(1).GetPersonalLogs(
-                "2012-09-05",
-                "2012-09-05",
-                "daily",
-                "ro",
-                Arg.Any<Dictionary<string, string>>(),
-                "613");
+            personalLogManagerServiceMock.Verify(
+                x => x.GetPersonalLogs(
+                    "2012-09-05",
+                    "2012-09-05",
+                    "daily",
+                    "ro",
+                    It.IsAny<Dictionary<string, string>>(),
+                    "613"),
+                Times.Once);
         }
 
         [Test]
         public void GivenGetPersonalLogsParameters_WhenGetIsCalled_ThenResponseDataContainsPersonalLogs()
         {
-            PersonalLogs expectedLogs = new() { Logs = new() { "Log entry 1", "Log entry 2" } };
-            personalLogManagerService.GetPersonalLogs(
-                Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(),
-                Arg.Any<string>(), Arg.Any<Dictionary<string, string>>(), Arg.Any<string>())
+            PersonalLogs expectedLogs = new()
+            {
+                Logs = ["Log entry 1", "Log entry 2"]
+            };
+
+            personalLogManagerServiceMock
+                .Setup(x => x.GetPersonalLogs(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<string>()))
                 .Returns(expectedLogs);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -295,11 +356,14 @@ namespace GptActionsOrchestrator.UnitTests.Service
         public void GivenGetPersonalLogsWithNestedDataParameters_WhenGetIsCalled_ThenDataDictionaryIsPassedToService()
         {
             Dictionary<string, string> capturedData = null;
-            personalLogManagerService.GetPersonalLogs(
-                Arg.Any<string>(), Arg.Any<string>(), Arg.Any<string>(),
-                Arg.Any<string>(),
-                Arg.Do<Dictionary<string, string>>(data => capturedData = data),
-                Arg.Any<string>())
+            personalLogManagerServiceMock
+                .Setup(x => x.GetPersonalLogs(
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    It.IsAny<string>(),
+                    Arg.Do<Dictionary<string, string>>(data => capturedData = data),
+                    It.IsAny<string>())
                 .Returns(new PersonalLogs());
 
             orchestrator.Get(new Dictionary<string, string>
@@ -324,7 +388,8 @@ namespace GptActionsOrchestrator.UnitTests.Service
         [Test]
         public void GivenGetSteamAppDataParameters_WhenGetIsCalled_ThenSteamStoreServiceIsCalledWithCorrectAppId()
         {
-            steamStoreService.GetAppData(Arg.Any<string>())
+            steamStoreServiceMock
+                .Setup(x => x.GetAppData(It.IsAny<string>()))
                 .Returns(new SteamAppEntity());
 
             orchestrator.Get(new Dictionary<string, string>
@@ -333,14 +398,16 @@ namespace GptActionsOrchestrator.UnitTests.Service
                 { "appId", "613" }
             });
 
-            steamStoreService.Received(1).GetAppData("613");
+            steamStoreServiceMock.Verify(x => x.GetAppData("613"), Times.Once);
         }
 
         [Test]
         public void GivenGetSteamAppDataParameters_WhenGetIsCalled_ThenResponseDataContainsSteamAppEntity()
         {
             SteamAppEntity expectedApp = new() { Id = "613", Name = "Solaire's Quest" };
-            steamStoreService.GetAppData("613")
+
+            steamStoreServiceMock
+                .Setup(x => x.GetAppData("613"))
                 .Returns(expectedApp);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -356,28 +423,26 @@ namespace GptActionsOrchestrator.UnitTests.Service
 
         [Test]
         public void GivenUnknownActionName_WhenGetIsCalled_ThenNotImplementedExceptionIsThrown()
-        {
-            Assert.That(
+            => Assert.That(
                 () => orchestrator.Get(new Dictionary<string, string>
                 {
                     { "action", "solaire_of_astora" }
                 }),
                 Throws.TypeOf<NotImplementedException>());
-        }
 
         [Test]
         public void GivenMissingActionParameter_WhenGetIsCalled_ThenNotImplementedExceptionIsThrown()
-        {
-            Assert.That(
-                () => orchestrator.Get(new Dictionary<string, string>()),
+            => Assert.That(
+                () => orchestrator.Get([]),
                 Throws.TypeOf<NotImplementedException>());
-        }
 
         [Test]
         public void GivenActionSpecifiedById_WhenGetIsCalled_ThenCorrectServiceIsDispatched()
         {
             GitHubRepository expectedRepository = new() { Name = "test-repo" };
-            gitHubService.GetRepository(Arg.Any<string>(), Arg.Any<string>())
+
+            gitHubServiceMock
+                .Setup(x => x.GetRepository(It.IsAny<string>(), It.IsAny<string>()))
                 .Returns(expectedRepository);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
