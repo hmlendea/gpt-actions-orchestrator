@@ -1,6 +1,6 @@
 # Security Policy
 
-This policy defines how security vulnerabilities should be reported for GPT Actions Orchestrator, what release channels receive security maintenance, and how coordinated disclosure is handled.
+This policy defines how security vulnerabilities should be reported for GPT Actions Orchestrator, which release channels receive security maintenance, and how coordinated disclosure is handled. Security maintenance covers the latest release and the `master` branch.
 
 ## 📑 Table of Contents
 
@@ -35,10 +35,14 @@ To report a vulnerability:
 The subsequent report categories are in scope for this repository:
 - Authentication, authorisation, and API key handling weaknesses
 - Vulnerabilities that impact confidentiality, integrity, or availability of orchestrated actions and integrations
+- Exposure of configured secrets, bearer tokens, HMAC signing keys, or sensitive request data
+- Vulnerabilities in the `/Actions` endpoint, middleware pipeline, action dispatch, alias resolution, and provider integration boundaries
 
 The subsequent categories are out of scope unless explicitly stated to the contrary:
 - Denial-of-service findings that rely exclusively on unrealistic local-only conditions
 - Vulnerabilities in unsupported, unofficial forks or third-party redistributions
+- Vulnerabilities in upstream GitHub, Personal Log Manager, Steam, .NET, or NuGet dependencies that do not arise from this project’s integration or configuration
+- Reports concerning unsupported preceding versions when the issue is resolved in the latest supported version
 
 ## 📢 Disclosure Policy
 
