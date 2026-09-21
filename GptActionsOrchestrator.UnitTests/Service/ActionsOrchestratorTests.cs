@@ -231,7 +231,8 @@ namespace GptActionsOrchestrator.UnitTests.Service
         public void GivenGetGitHubRepositoryReleasesParameters_WhenGetIsCalled_ThenResponseDataContainsReleases()
         {
             List<GitHubRelease> expectedReleases = [new() { Name = "v1.0.0", TagName = "v1.0.0" }];
-            gitHubServiceMock.GetRepositoryReleases("IlarionPintilie", "test-repo")
+            gitHubServiceMock
+                .Setup(service => service.GetRepositoryReleases("IlarionPintilie", "test-repo"))
                 .Returns(expectedReleases);
 
             GetActionResponse response = orchestrator.Get(new Dictionary<string, string>
@@ -357,13 +358,20 @@ namespace GptActionsOrchestrator.UnitTests.Service
         {
             Dictionary<string, string> capturedData = null;
             personalLogManagerServiceMock
-                .Setup(x => x.GetPersonalLogs(
+                .Setup(service => service.GetPersonalLogs(
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
                     It.IsAny<string>(),
-                    Arg.Do<Dictionary<string, string>>(data => capturedData = data),
-                    It.IsAny<string>())
+                    It.IsAny<Dictionary<string, string>>(),
+                    It.IsAny<string>()))
+                .Callback((
+                    string dateBeginning,
+                    string dateEnd,
+                    string template,
+                    string localisation,
+                    Dictionary<string, string> data,
+                    string count) => capturedData = data)
                 .Returns(new PersonalLogs());
 
             orchestrator.Get(new Dictionary<string, string>
