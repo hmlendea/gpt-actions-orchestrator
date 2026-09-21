@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="GptActionsOrchestrator.IntegrationTests/GptActionsOrchestrator.IntegrationTests.csproj" />
   <Project Path="GptActionsOrchestrator.UnitTests/GptActionsOrchestrator.UnitTests.csproj" />
   <Project Path="GptActionsOrchestrator/GptActionsOrchestrator.csproj" />
 </Solution>

@@ -139,7 +139,7 @@ After configuration, validate the service with a request that includes a valid `
 
 | Component | Supported Versions | Notes |
 |-----------|--------------------|-------|
-| .NET | `net10.0` | Project target framework in both main and test projects |
+| .NET | `net10.0` | Project target framework in the service and test projects |
 | GitHub REST API | Current REST API with `X-GitHub-Api-Version: 2022-11-28` | Version header is set by the GitHub adapter |
 
 ## 🔌 Integrations
@@ -197,13 +197,15 @@ dotnet run --project GptActionsOrchestrator/GptActionsOrchestrator.csproj
 
 ### Test
 
+Run the unit and hosted integration test suites:
+
 ```bash
 dotnet test GptActionsOrchestrator.slnx
 ```
 
 ### Continuous Integration
 
-The primary CI workflow is `.github/workflows/dotnet.yml` and runs restore, build, and test against the `master` branch and pull requests targeting `master`.
+The primary CI workflow is `.github/workflows/dotnet.yml` and runs restore, build, unit tests, and hosted integration tests against the `master` branch and pull requests targeting `master`.
 
 ### Release
 
@@ -223,14 +225,16 @@ This script downloads and executes an external release helper from `https://raw.
 |---------|---------|-------|---------|
 | `NuciAPI` | `3.5.1` | Runtime | API request and response contracts |
 | `NuciAPI.Middleware` | `2.0.2` | Runtime | Exception handling, request logging, and scanner protection middleware |
-| `NuciDAL` | `3.1.1` | Runtime | File-backed alias repository |
-| `NuciWeb.HTTP` | `1.7.1` | Runtime | HTTP client creation for external integrations |
+| `NuciDAL` | `3.2.1` | Runtime | File-backed alias repository |
+| `NuciWeb.HTTP` | `1.7.2` | Runtime | HTTP client creation for external integrations |
 | `NuciLog` | `1.2.1` | Runtime | Application logging |
-| `NUnit` | `4.6.1` | Development | Unit-testing framework |
+| `Microsoft.AspNetCore.Mvc.Testing` | `10.0.0` | Development | In-memory ASP.NET Core host for integration tests |
+| `Moq` | `4.20.72` | Development | Deterministic integration boundary and unit-test substitutes |
+| `NUnit` | `4.6.1` | Development | Unit and integration testing framework |
 
 ## 🗂️ Project Structure
 
-The repository is organised as one ASP.NET Core service project plus one unit-test project.
+The repository is organised as one ASP.NET Core service project, one unit-test project, and one hosted integration-test project.
 
 ### Projects and Packages
 
@@ -238,6 +242,7 @@ The repository is organised as one ASP.NET Core service project plus one unit-te
 |---------|------|---------|
 | `GptActionsOrchestrator/GptActionsOrchestrator.csproj` | ASP.NET Core web service | Hosts the `/Actions` endpoint and integration orchestration |
 | `GptActionsOrchestrator.UnitTests/GptActionsOrchestrator.UnitTests.csproj` | .NET test project | Verifies action model and orchestration dispatch behaviour |
+| `GptActionsOrchestrator.IntegrationTests/GptActionsOrchestrator.IntegrationTests.csproj` | ASP.NET Core integration-test project | Verifies the hosted HTTP, middleware, authorisation, routing, alias, dispatch, query, response, and error contracts |
 
 ### Directories
 
@@ -249,6 +254,7 @@ The repository is organised as one ASP.NET Core service project plus one unit-te
 | `GptActionsOrchestrator/Configuration/` | Typed configuration classes |
 | `GptActionsOrchestrator/Data/` | Action alias datastore |
 | `GptActionsOrchestrator.UnitTests/` | Unit tests and test project configuration |
+| `GptActionsOrchestrator.IntegrationTests/` | Hosted integration tests and deterministic application factory infrastructure |
 
 ## 🏗️ Architecture
 

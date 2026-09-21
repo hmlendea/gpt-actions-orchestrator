@@ -327,13 +327,13 @@ The service is a single ASP.NET Core web process targeting `net10.0`. It has no 
 
 | Contract | Owner | Invariant | Verification | Change Policy |
 |----------|-------|-----------|--------------|---------------|
-| `action` query identifier semantics | Orchestration layer | Canonical action IDs and names must continue to map to expected dispatch branches | Unit tests in `ActionsOrchestratorTests` and `GptActionTests` | Preserve existing IDs; add aliases for new synonyms rather than repurposing existing IDs |
-| Nested query key conversion | Orchestration layer | Dotted keys (for example `data.mood`) must be transformed into child dictionary entries | Unit test `GivenGetPersonalLogsWithNestedDataParameters_WhenGetIsCalled_ThenDataDictionaryIsPassedToService` | Maintain conversion rule or introduce additive migration support |
-| Response envelope shape | API response layer | Success responses include action plus provider-specific data object | Integration and consumer contract validation | Breaking envelope changes require explicit consumer migration |
+| `action` query identifier semantics | Orchestration layer | Canonical action IDs, names, and aliases must continue to map to expected dispatch branches | Unit tests plus hosted integration matrices for every canonical action and alias | Preserve existing IDs; add aliases for new synonyms rather than repurposing existing IDs |
+| Nested query key conversion | Orchestration layer | Dotted keys (for example `data.mood`) must be transformed into child dictionary entries | Unit tests plus hosted integration matrices for scalar, duplicate, nested, and conflicting parameters | Maintain conversion rule or introduce additive migration support |
+| Response envelope shape | API response layer | Success and error responses retain their status, action, code, and provider-data contracts | Hosted integration tests across the real middleware, controller, orchestration, and serialisation pipeline | Breaking envelope changes require explicit consumer migration |
 
 ## ✅ Testing and Verification
 
-The unit-test project verifies action resolution, dispatch selection, alias-independent routing by name or ID, and selected parameter-shaping behaviour. Adapter internals and middleware interactions are not fully covered by automated tests in this repository.
+The unit-test project verifies action resolution, dispatch selection, routing by name or ID, and selected parameter-shaping behaviour. The integration-test project hosts the service with `WebApplicationFactory`, preserves the real middleware, authorisation, routing, controller, alias repository, orchestration, and serialisation pipeline, and substitutes only outbound provider interfaces and operational logging. Its parameterised matrices cover all canonical action names and IDs, every configured alias, diverse query values, authentication variants, scanner protection, transport routing, response envelopes, and exception translation. Live upstream API conduct remains outside the deterministic suite.
 
 Execute the principal automated verification with:
 
@@ -370,7 +370,8 @@ Action extension must preserve canonical action ID stability and query-parameter
 | External integrations | `GptActionsOrchestrator/Integrations/` |
 | Configuration models | `GptActionsOrchestrator/Configuration/` |
 | Alias datastore and data objects | `GptActionsOrchestrator/Data/`, `GptActionsOrchestrator/DataAccess/` |
-| Tests | `GptActionsOrchestrator.UnitTests/` |
+| Unit tests | `GptActionsOrchestrator.UnitTests/` |
+| Hosted integration tests | `GptActionsOrchestrator.IntegrationTests/` |
 
 ## 📚 Related Documentation
 
