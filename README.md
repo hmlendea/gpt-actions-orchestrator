@@ -156,6 +156,8 @@ Inbound requests are protected with API-key authorisation at the `/Actions` endp
 
 ## 🛡️ Privacy and Data
 
+See [PRIVACY.md](PRIVACY.md) for a complete technical description of data handling, storage, integrations, and operator responsibilities.
+
 | Data | Purpose | Storage | Retention | Optional |
 |------|---------|---------|-----------|----------|
 | Action query parameters | Action dispatch and integration request shaping | In-memory request scope | Request lifetime | No |
