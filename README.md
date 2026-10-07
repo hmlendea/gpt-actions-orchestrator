@@ -1,5 +1,7 @@
 [![Donate](https://img.shields.io/badge/-%E2%99%A5%20Donate-%23ff69b4)](https://hmlendea.go.ro/funding)
-[![License](https://img.shields.io/github/license/horatiu/gpt-actions-orchestrator)](https://github.com/horatiu/gpt-actions-orchestrator/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/blob/main/LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/releases/latest)
+[![Build Status](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/dotnet.yml)
 
 # GPT Actions Orchestrator
 
@@ -12,10 +14,15 @@ An ASP.NET Core web service that provides a single HTTP endpoint for executing G
 - [Capabilities](#-capabilities)
 - [Use Cases](#-use-cases)
 - [Usage](#-usage)
+- [System Requirements](#-system-requirements)
+- [Installation](#-installation)
 - [Configuration](#-configuration)
 - [Development](#-development)
 - [Architecture](#-architecture)
 - [Documentation](#-documentation)
+- [Contributing](#-contributing)
+- [Security](#-security)
+- [License](#-license)
 
 ## ✨ Capabilities
 
@@ -64,202 +71,6 @@ Supported actions:
 - `personal-log-manager-get-personal-logs` — Query personal logs
 - `steam-app-data` — Get Steam app metadata
 
-## ⚙️ Configuration
-
-### Configuration Files
-
-| File | Scope | Purpose |
-|------|-------|---------|
-| `appsettings.json` | Application | Base configuration for all settings |
-| `appsettings.Development.json` | Development | Local overrides (gitignored) |
-
-### Settings
-
-| Section | Key | Type | Default | Required | Description |
-|---------|-----|------|---------|----------|-------------|
-| `SecuritySettings` | `ApiKeys` | `string[]` | — | Yes | Valid API keys for inbound authentication |
-| `SecuritySettings` | `GitHubToken` | `string` | — | No | GitHub personal access token |
-| `SecuritySettings` | `PersonalLogManagerApiKey` | `string` | — | No | PLM API key for HMAC signing |
-| `SecuritySettings` | `PersonalLogManagerApiSecret` | `string` | — | No | PLM API secret for HMAC signing |
-| `DataStoreSettings` | `GptActionAliasesStorePath` | `string` | `Data/gpt-action-aliases.json` | No | Path to alias JSON file |
-| `GitHubSettings` | `DefaultUsername` | `string` | — | No | Default GitHub username |
-| `PersonalLogManagerSettings` | `BaseUrl` | `string` | — | Yes | PLM API base URL |
-| `PersonalLogManagerSettings` | `BearerToken` | `string` | — | Yes | PLM bearer token |
-| `PersonalLogManagerSettings` | `HmacKey` | `string` | — | Yes | PLM HMAC signing key |
-| `NuciLoggerSettings` | `LogFilePath` | `string` | `logfile.log` | No | Log file output path |
-| `NuciLoggerSettings` | `IsFileOutputEnabled` | `bool` | `true` | No | Enable file logging |
-
-### Secret Management
-
-All secrets (API keys, tokens, HMAC keys) must be supplied through secure configuration sources in non-local environments:
-- Environment variables (e.g., `SecuritySettings__ApiKeys__0`)
-- Azure Key Vault / AWS Secrets Manager / HashiCorp Vault
-- GitHub Actions secrets for CI/CD
-
-### Precedence
-
-Configuration follows standard ASP.NET Core precedence (highest to lowest):
-1. Command-line arguments
-2. Environment variables
-3. `appsettings.{Environment}.json`
-4. `appsettings.json`
-
-## 🛠️ Development
-
-### Requirements
-
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
-
-### Setup
-
-```bash
-git clone https://github.com/horatiu/gpt-actions-orchestrator
-cd gpt-actions-orchestrator
-dotnet restore
-```
-
-### Build
-
-```bash
-dotnet build --configuration Release
-```
-
-### Run
-
-```bash
-dotnet run --project GptActionsOrchestrator
-```
-
-Service starts at `https://localhost:5001` (or configured port).
-
-### Test
-
-```bash
-dotnet test
-```
-
-### Integration Tests
-
-```bash
-dotnet test GptActionsOrchestrator.IntegrationTests/
-```
-
-## 🏗️ Architecture
-
-See the [ARCHITECTURE.md](./ARCHITECTURE.md) for the system context, principal components, runtime flows, ownership boundaries, dependencies, constraints, and extension points.
-
-## 📚 Documentation
-
-Comprehensive implementation-grounded documentation lives in [`docs/`](docs/):
-
-| Resource | Description |
-|----------|-------------|
-| [`architecture-overview.md`](docs/architecture-overview.md) | High-level system decomposition, component diagram, dependency rules |
-| [`runtime-flows.md`](docs/runtime-flows.md) | Causal execution traces with sequence diagrams for each action type |
-| [`component-reference.md`](docs/component-reference.md) | Detailed responsibilities, dependencies, and interfaces for every component |
-| [`integration-adapters.md`](docs/integration-adapters.md) | GitHub, Personal Log Manager, and Steam adapter contracts and failure semantics |
-| [`orchestration-engine.md`](docs/orchestration-engine.md) | Deep dive into `ActionsOrchestrator` dispatch, parameter building, alias resolution |
-| [`api-boundary.md`](docs/api-boundary.md) | HTTP API layer: controller, middleware pipeline, request/response models |
-| [`configuration-system.md`](docs/configuration-system.md) | Typed settings binding, precedence, secret management |
-| [`data-architecture.md`](docs/data-architecture.md) | Data structures, alias repository, transformation rules |
-| [`logging-observability.md`](docs/logging-observability.md) | NuciLog infrastructure, custom log keys, operations, diagnostic flow |
-| [`error-handling.md`](docs/error-handling.md) | Layered exception handling, failure semantics, error response contracts |
-| [`security.md`](docs/security.md) | Authentication, HMAC, headers, threat model, compliance |
-| [`testing-strategy.md`](docs/testing-strategy.md) | Unit/integration test patterns, mocking conventions, CI setup |
-| [`source-map.md`](docs/source-map.md) | Cross-reference between documentation topics and source code locations |
-
-> These documents complement the root [`ARCHITECTURE.md`](ARCHITECTURE.md) with implementation-level detail so a future agent can understand the system without rediscovering from source code.
-
-## Technical Documentation
-
-Comprehensive implementation-grounded documentation lives in [`docs/`](docs/):
-
-| Document | Description |
-|----------|-------------|
-| [`architecture-overview.md`](docs/architecture-overview.md) | High-level system decomposition, component diagram, dependency rules |
-| [`runtime-flows.md`](docs/runtime-flows.md) | Causal execution traces with sequence diagrams for each action type |
-| [`component-reference.md`](docs/component-reference.md) | Detailed responsibilities, dependencies, and interfaces for every component |
-| [`integration-adapters.md`](docs/integration-adapters.md) | GitHub, Personal Log Manager, and Steam adapter contracts and failure semantics |
-| [`orchestration-engine.md`](docs/orchestration-engine.md) | Deep dive into `ActionsOrchestrator` dispatch, parameter building, alias resolution |
-| [`api-boundary.md`](docs/api-boundary.md) | HTTP API layer: controller, middleware pipeline, request/response models |
-| [`configuration-system.md`](docs/configuration-system.md) | Typed settings binding, precedence, secret management |
-| [`data-architecture.md`](docs/data-architecture.md) | Data structures, alias repository, transformation rules |
-| [`logging-observability.md`](docs/logging-observability.md) | NuciLog infrastructure, custom log keys, operations, diagnostic flow |
-| [`error-handling.md`](docs/error-handling.md) | Layered exception handling, failure semantics, error response contracts |
-| [`security.md`](docs/security.md) | Authentication, HMAC, headers, threat model, compliance |
-| [`testing-strategy.md`](docs/testing-strategy.md) | Unit/integration test patterns, mocking conventions, CI setup |
-| [`source-map.md`](docs/source-map.md) | Cross-reference between documentation topics and source code locations |
-
-> These documents complement the root [`ARCHITECTURE.md`](ARCHITECTURE.md) with implementation-level detail so a future agent can understand the system without rediscovering from source code.
-[![Latest Release](https://img.shields.io/github/v/release/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/releases/latest)
-[![Build Status](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/dotnet.yml)
-[![License](https://img.shields.io/github/license/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/blob/master/LICENSE)
-
-# GPT Actions Orchestrator
-
-GPT Actions Orchestrator is a .NET HTTP service that exposes a single action-driven endpoint and dispatches requests to supported upstream integrations.
-
-## 📑 Table of Contents
-
-- [Capabilities](#-capabilities)
-- [Use Cases](#-use-cases)
-- [Usage](#-usage)
-- [System Requirements](#-system-requirements)
-- [Installation](#-installation)
-  - [Manual Installation](#manual-installation)
-- [Configuration](#-configuration)
-  - [Configuration Files](#configuration-files)
-  - [Settings](#settings)
-  - [Precedence](#precedence)
-  - [Secret Management](#secret-management)
-  - [Validation](#validation)
-- [Compatibility](#-compatibility)
-- [Integrations](#-integrations)
-- [Authentication and Authorisation](#-authentication-and-authorisation)
-- [Privacy and Data](#-privacy-and-data)
-  - [Data Locations](#data-locations)
-- [Development](#-development)
-  - [Requirements](#requirements)
-  - [Setup](#setup)
-  - [Build](#build)
-  - [Run](#run)
-  - [Test](#test)
-  - [Continuous Integration](#continuous-integration)
-  - [Release](#release)
-  - [Dependencies](#dependencies)
-- [Project Structure](#-project-structure)
-  - [Projects and Packages](#projects-and-packages)
-  - [Directories](#directories)
-- [Architecture](#-architecture)
-- [Contributing](#-contributing)
-- [Security](#-security)
-- [Project Engagement](#-project-engagement)
-- [License](#-license)
-
-## ✨ Capabilities
-
-- Routes a single inbound action request to the correct integration service.
-- Supports both canonical action IDs and alias action IDs.
-- Retrieves GitHub repositories, files, README content, and releases.
-- Retrieves Personal Log Manager logs with date range and optional data payload.
-- Retrieves Steam Storefront application metadata.
-
-## 🎯 Use Cases
-
-- **GPT actions backend:** Route assistant tool calls through one stable HTTP endpoint.
-- **Repository retrieval automation:** Query GitHub repository metadata and file content for assistant workflows.
-- **Personal activity reporting:** Retrieve personal logs with date range and templating parameters.
-
-## 🚀 Usage
-
-Send a `GET` request to the `/Actions` endpoint with an `action` parameter and the action-specific parameters.
-
-```http
-GET /Actions?action=github.repository.get&username=hmlendea&repository=gpt-actions-orchestrator
-```
-
-Successful responses return a common envelope with the selected action and its provider-specific data payload.
-
 ## 🖥️ System Requirements
 
 | Component | Minimum | Recommended |
@@ -269,47 +80,42 @@ Successful responses return a common envelope with the selected action and its p
 
 ## 📦 Installation
 
-[![Obtain it from GitHub](https://raw.githubusercontent.com/hmlendea/readme-assets/master/badges/stores/github.png)](https://github.com/hmlendea/gpt-actions-orchestrator/releases)
-
-### Manual Installation
-
-1. Clone this repository.
-2. Restore dependencies.
-3. Configure `GptActionsOrchestrator/appsettings.json`.
-4. Run the service.
-
 ```bash
-git clone git@github.com:hmlendea/gpt-actions-orchestrator.git
+git clone https://github.com/hmlendea/gpt-actions-orchestrator
 cd gpt-actions-orchestrator
 dotnet restore GptActionsOrchestrator.slnx
-dotnet run --project GptActionsOrchestrator/GptActionsOrchestrator.csproj
 ```
 
 ## ⚙️ Configuration
-
-The service uses typed settings bound from ASP.NET Core configuration providers.
 
 ### Configuration Files
 
 | File | Scope | Purpose |
 |------|-------|---------|
-| `GptActionsOrchestrator/appsettings.json` | Application-wide | Defines API keys, integration settings, datastore path, and logger settings |
+| `GptActionsOrchestrator/appsettings.json` | Application-wide | Base configuration for all settings |
+| `GptActionsOrchestrator/appsettings.Development.json` | Development | Local overrides (gitignored) |
 
 ### Settings
 
-The subsequent settings are recognised:
 | Section | Key | Type | Default | Required | Description |
 |---------|-----|------|---------|----------|-------------|
-| SecuritySettings | `clientId` | `string` | `GptActionsOrchestrator` | Yes | Client identifier used for outbound authorisation metadata |
-| SecuritySettings | `apiKey` | `string` | `—` | Yes | API key expected for inbound `/Actions` requests |
-| DataStoreSettings | `gptActionAliasesStorePath` | `string` | `Data/gpt-action-aliases.json` | Yes | File path used for action alias mapping |
-| GitHubSettings | `username` | `string` | `—` | Yes | Default GitHub username for repository queries |
-| GitHubSettings | `apiKey` | `string` | `—` | No | Bearer token for authenticated GitHub API calls |
-| PersonalLogManagerSettings | `baseUrl` | `string` | `—` | Yes | Base URL of the Personal Log Manager API |
-| PersonalLogManagerSettings | `apiKey` | `string` | `—` | Yes | Bearer token for Personal Log Manager requests |
-| PersonalLogManagerSettings | `hmacSigningKey` | `string` | `—` | Yes | Shared key for HMAC signing and response validation |
-| NuciLoggerSettings | `logFilePath` | `string` | `logfile.log` | No | File path for logger output when file logging is enabled |
-| NuciLoggerSettings | `isFileOutputEnabled` | `bool` | `true` | No | Enables or disables file-based logging |
+| `SecuritySettings` | `ClientId` | `string` | `GptActionsOrchestrator` | Yes | Client identifier used for outbound authorisation metadata |
+| `SecuritySettings` | `ApiKey` | `string` | — | Yes | API key expected for inbound `/Actions` requests |
+| `DataStoreSettings` | `GptActionAliasesStorePath` | `string` | `Data/gpt-action-aliases.json` | Yes | File path used for action alias mapping |
+| `GitHubSettings` | `Username` | `string` | — | Yes | Default GitHub username for repository queries |
+| `GitHubSettings` | `ApiKey` | `string` | — | No | Bearer token for authenticated GitHub API calls |
+| `PersonalLogManagerSettings` | `BaseUrl` | `string` | — | Yes | Base URL of the Personal Log Manager API |
+| `PersonalLogManagerSettings` | `ApiKey` | `string` | — | Yes | Bearer token for Personal Log Manager requests |
+| `PersonalLogManagerSettings` | `HmacSigningKey` | `string` | — | Yes | Shared key for HMAC signing and response validation |
+| `NuciLoggerSettings` | `LogFilePath` | `string` | `logfile.log` | No | File path for logger output when file logging is enabled |
+| `NuciLoggerSettings` | `IsFileOutputEnabled` | `bool` | `true` | No | Enables or disables file-based logging |
+
+### Secret Management
+
+Store `SecuritySettings.ApiKey`, `GitHubSettings.ApiKey`, `PersonalLogManagerSettings.ApiKey`, and `PersonalLogManagerSettings.HmacSigningKey` in a secure secret source for non-local environments:
+- Environment variables (e.g., `SecuritySettings__ApiKey`)
+- Azure Key Vault / AWS Secrets Manager / HashiCorp Vault
+- GitHub Actions secrets for CI/CD
 
 ### Precedence
 
@@ -318,50 +124,6 @@ Configuration precedence follows the ASP.NET Core default host order, where late
 2. `appsettings.{Environment}.json`
 3. Environment variables
 4. Command-line arguments
-
-### Secret Management
-
-Store `securitySettings.apiKey`, `gitHubSettings.apiKey`, `personalLogManagerSettings.apiKey`, and `personalLogManagerSettings.hmacSigningKey` in a secure secret source for non-local environments.
-
-### Validation
-
-After configuration, validate the service with a request that includes a valid `action` and API key.
-
-## 🧩 Compatibility
-
-| Component | Supported Versions | Notes |
-|-----------|--------------------|-------|
-| .NET | `net10.0` | Project target framework in the service and test projects |
-| GitHub REST API | Current REST API with `X-GitHub-Api-Version: 2022-11-28` | Version header is set by the GitHub adapter |
-
-## 🔌 Integrations
-
-| Integration | Compatibility | Purpose | Required |
-|-------------|---------------|---------|----------|
-| GitHub API | REST API over HTTPS | Repository metadata, file content, and release retrieval | No |
-| Personal Log Manager API | NuciAPI-compatible endpoint | Personal log retrieval by date range and options | No |
-| Steam Storefront API | `store.steampowered.com/api/appdetails` | Steam application name retrieval | No |
-
-## 🔐 Authentication and Authorisation
-
-Inbound requests are protected with API-key authorisation at the `/Actions` endpoint. Outbound integration calls use per-provider credentials from configuration when configured.
-
-## 🛡️ Privacy and Data
-
-See [PRIVACY.md](PRIVACY.md) for a complete technical description of data handling, storage, integrations, and operator responsibilities.
-
-| Data | Purpose | Storage | Retention | Optional |
-|------|---------|---------|-----------|----------|
-| Action query parameters | Action dispatch and integration request shaping | In-memory request scope | Request lifetime | No |
-| Action alias catalogue | Alias-to-canonical-action resolution | JSON file datastore | Until modified by maintainers | No |
-| Log metadata | Operational diagnostics | Configured logger outputs | According to deployment log policy | Yes |
-
-### Data Locations
-
-| Platform or Scope | Location | Contents |
-|-------------------|----------|----------|
-| Repository data | `GptActionsOrchestrator/Data/gpt-action-aliases.json` | Action alias records |
-| Runtime log output | `GptActionsOrchestrator/logfile.log` (default) | Application log entries when file logging is enabled |
 
 ## 🛠️ Development
 
@@ -372,7 +134,7 @@ See [PRIVACY.md](PRIVACY.md) for a complete technical description of data handli
 ### Setup
 
 ```bash
-git clone git@github.com:hmlendea/gpt-actions-orchestrator.git
+git clone https://github.com/hmlendea/gpt-actions-orchestrator
 cd gpt-actions-orchestrator
 dotnet restore GptActionsOrchestrator.slnx
 ```
@@ -426,33 +188,31 @@ This script downloads and executes an external release helper from `https://raw.
 | `Moq` | `4.20.72` | Development | Deterministic integration boundary and unit-test substitutes |
 | `NUnit` | `4.6.1` | Development | Unit and integration testing framework |
 
-## 🗂️ Project Structure
-
-The repository is organised as one ASP.NET Core service project, one unit-test project, and one hosted integration-test project.
-
-### Projects and Packages
-
-| Project | Type | Purpose |
-|---------|------|---------|
-| `GptActionsOrchestrator/GptActionsOrchestrator.csproj` | ASP.NET Core web service | Hosts the `/Actions` endpoint and integration orchestration |
-| `GptActionsOrchestrator.UnitTests/GptActionsOrchestrator.UnitTests.csproj` | .NET test project | Verifies action model and orchestration dispatch behaviour |
-| `GptActionsOrchestrator.IntegrationTests/GptActionsOrchestrator.IntegrationTests.csproj` | ASP.NET Core integration-test project | Verifies the hosted HTTP, middleware, authorisation, routing, alias, dispatch, query, response, and error contracts |
-
-### Directories
-
-| Directory | Purpose |
-|-----------|---------|
-| `GptActionsOrchestrator/Api/` | HTTP request and response contracts plus controller boundary |
-| `GptActionsOrchestrator/Service/` | Action orchestration logic and action model |
-| `GptActionsOrchestrator/Integrations/` | External provider adapters for GitHub, Personal Log Manager, and Steam |
-| `GptActionsOrchestrator/Configuration/` | Typed configuration classes |
-| `GptActionsOrchestrator/Data/` | Action alias datastore |
-| `GptActionsOrchestrator.UnitTests/` | Unit tests and test project configuration |
-| `GptActionsOrchestrator.IntegrationTests/` | Hosted integration tests and deterministic application factory infrastructure |
-
 ## 🏗️ Architecture
 
-See the [architecture documentation](./ARCHITECTURE.md) for the system context, principal components, runtime flows, ownership boundaries, dependencies, constraints, and extension points.
+See the [ARCHITECTURE.md](./ARCHITECTURE.md) for the system context, principal components, runtime flows, ownership boundaries, dependencies, constraints, and extension points.
+
+## 📚 Documentation
+
+Comprehensive implementation-grounded documentation lives in [`docs/`](docs/):
+
+| Resource | Description |
+|----------|-------------|
+| [`architecture-overview.md`](docs/architecture-overview.md) | High-level system decomposition, component diagram, dependency rules |
+| [`runtime-flows.md`](docs/runtime-flows.md) | Causal execution traces with sequence diagrams for each action type |
+| [`component-reference.md`](docs/component-reference.md) | Detailed responsibilities, dependencies, and interfaces for every component |
+| [`integration-adapters.md`](docs/integration-adapters.md) | GitHub, Personal Log Manager, and Steam adapter contracts and failure semantics |
+| [`orchestration-engine.md`](docs/orchestration-engine.md) | Deep dive into `ActionsOrchestrator` dispatch, parameter building, alias resolution |
+| [`api-boundary.md`](docs/api-boundary.md) | HTTP API layer: controller, middleware pipeline, request/response models |
+| [`configuration-system.md`](docs/configuration-system.md) | Typed settings binding, precedence, secret management |
+| [`data-architecture.md`](docs/data-architecture.md) | Data structures, alias repository, transformation rules |
+| [`logging-observability.md`](docs/logging-observability.md) | NuciLog infrastructure, custom log keys, operations, diagnostic flow |
+| [`error-handling.md`](docs/error-handling.md) | Layered exception handling, failure semantics, error response contracts |
+| [`security.md`](docs/security.md) | Authentication, HMAC, headers, threat model, compliance |
+| [`testing-strategy.md`](docs/testing-strategy.md) | Unit/integration test patterns, mocking conventions, CI setup |
+| [`source-map.md`](docs/source-map.md) | Cross-reference between documentation topics and source code locations |
+
+> These documents complement the root [`ARCHITECTURE.md`](ARCHITECTURE.md) with implementation-level detail so a future agent can understand the system without rediscovering from source code.
 
 ## 🤝 Contributing
 
@@ -471,14 +231,6 @@ When doing so, please:
 ## 🔒 Security
 
 For information on reporting security vulnerabilities, see [SECURITY.md](./SECURITY.md).
-
-## 💝 Project Engagement
-
-Discovered a problem or have a suggestion? [Open an issue](https://github.com/hmlendea/gpt-actions-orchestrator/issues)!
-
-If you find this project useful, consider [funding it](https://hmlendea.go.ro/funding) or starring ⭐️ it on GitHub!
-
-[![Donate](https://raw.githubusercontent.com/hmlendea/readme-assets/master/donate_generic.png)](https://hmlendea.go.ro/funding)
 
 ## 📄 License
 
