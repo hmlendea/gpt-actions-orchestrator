@@ -7,8 +7,6 @@
 
 An ASP.NET Core web service that provides a single HTTP endpoint for executing GPT Actions. The service accepts an action identifier plus query parameters, resolves aliases where applicable, dispatches to a dedicated integration service (GitHub, Personal Log Manager, or Steam Storefront), and returns a normalised response.
 
-> **Project status:** Active development
-
 ## 📑 Table of Contents
 
 - [Capabilities](#-capabilities)
@@ -227,6 +225,8 @@ When doing so, please:
 - Properly test all modifications, including edge cases and error conditions
 - Add tests for additional or modified functionality
 - Raise a new [issue](https://github.com/hmlendea/gpt-actions-orchestrator/issues) for problems or suggestions
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting issues, suggesting enhancements, and submitting code changes.
 
 ## 🔒 Security
 
