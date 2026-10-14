@@ -4,6 +4,9 @@ using GptActionsOrchestrator.Integrations.GitHub.Service.Models;
 
 namespace GptActionsOrchestrator.Integrations.GitHub.Service
 {
+    /// <summary>
+    /// Provides methods for interacting with the GitHub API.
+    /// </summary>
     public interface IGitHubService
     {
         /// <summary>

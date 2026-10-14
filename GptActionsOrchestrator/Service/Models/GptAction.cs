@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace GptActionsOrchestrator.Service.Models
 {
-    public class GptAction : IEquatable<GptAction>
+    public sealed class GptAction : IEquatable<GptAction>
     {
-        private static readonly Dictionary<string, GptAction> values = new()
+        private static readonly Dictionary<string, GptAction> Values = new()
         {
             { nameof(Unknown), new GptAction("unknown", nameof(Unknown)) },
             { nameof(GetGitHubRepository), new GptAction("github.repository.get", nameof(GetGitHubRepository)) },
@@ -28,16 +28,16 @@ namespace GptActionsOrchestrator.Service.Models
             Name = name;
         }
 
-        public static GptAction Unknown => values[nameof(Unknown)];
-        public static GptAction GetGitHubRepository => values[nameof(GetGitHubRepository)];
-        public static GptAction GetGitHubRepositoryFile => values[nameof(GetGitHubRepositoryFile)];
-        public static GptAction GetGitHubRepositoryReadme => values[nameof(GetGitHubRepositoryReadme)];
-        public static GptAction GetGitHubRepositoryReleases => values[nameof(GetGitHubRepositoryReleases)];
-        public static GptAction GetGitHubUserRepositories => values[nameof(GetGitHubUserRepositories)];
-        public static GptAction GetPersonalLogs => values[nameof(GetPersonalLogs)];
-        public static GptAction GetSteamAppData => values[nameof(GetSteamAppData)];
+        public static GptAction Unknown => Values[nameof(Unknown)];
+        public static GptAction GetGitHubRepository => Values[nameof(GetGitHubRepository)];
+        public static GptAction GetGitHubRepositoryFile => Values[nameof(GetGitHubRepositoryFile)];
+        public static GptAction GetGitHubRepositoryReadme => Values[nameof(GetGitHubRepositoryReadme)];
+        public static GptAction GetGitHubRepositoryReleases => Values[nameof(GetGitHubRepositoryReleases)];
+        public static GptAction GetGitHubUserRepositories => Values[nameof(GetGitHubUserRepositories)];
+        public static GptAction GetPersonalLogs => Values[nameof(GetPersonalLogs)];
+        public static GptAction GetSteamAppData => Values[nameof(GetSteamAppData)];
 
-        public static Array GetValues() => values.Values.ToArray();
+        public static Array GetValues() => Values.Values.ToArray();
 
         public bool Equals(GptAction other)
         {
@@ -80,14 +80,14 @@ namespace GptActionsOrchestrator.Service.Models
 
         public static GptAction FromString(string value)
         {
-            if (values.ContainsKey(value))
+            if (Values.ContainsKey(value))
             {
-                return values[value];
+                return Values[value];
             }
 
-            if (values.Values.Any(v => v.Id == value))
+            if (Values.Values.Any(v => v.Id == value))
             {
-                return values.Values.First(v => v.Id == value);
+                return Values.Values.First(v => v.Id == value);
             }
 
             return Unknown;
