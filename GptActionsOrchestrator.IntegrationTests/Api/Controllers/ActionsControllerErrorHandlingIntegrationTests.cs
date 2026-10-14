@@ -66,14 +66,38 @@ namespace GptActionsOrchestrator.IntegrationTests.Api.Controllers
 
             using HttpResponseMessage response = await httpClient.GetAsync(
                 ActionRequestPathBuilder.Build(parameters));
-            using JsonDocument responseDocument = await ActionErrorResponseReader.ReadAsync(
-                response,
-                HttpStatusCode.NotImplemented,
-                NotImplementedCode);
 
-            Assert.That(
-                responseDocument.RootElement.GetProperty("message").GetString(),
-                Is.EqualTo("The 'unknown' action is not supported."));
+            // Null action (no parameter) reaches controller and returns 501 NotImplemented
+            // Empty/whitespace action values are rejected by model binding with 400 BadRequest
+            if (actionValue is null)
+            {
+                using JsonDocument responseDocument = await ActionErrorResponseReader.ReadAsync(
+                    response,
+                    HttpStatusCode.NotImplemented,
+                    NotImplementedCode);
+
+                Assert.That(
+                    responseDocument.RootElement.GetProperty("message").GetString(),
+                    Is.EqualTo("The 'unknown' action is not supported."));
+            }
+            else if (string.IsNullOrWhiteSpace(actionValue))
+            {
+                Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest));
+                string responseContent = await response.Content.ReadAsStringAsync();
+                Assert.That(responseContent, Does.Contain("The GptActionName field is required."));
+            }
+            else
+            {
+                using JsonDocument responseDocument = await ActionErrorResponseReader.ReadAsync(
+                    response,
+                    HttpStatusCode.NotImplemented,
+                    NotImplementedCode);
+
+                Assert.That(
+                    responseDocument.RootElement.GetProperty("message").GetString(),
+                    Is.EqualTo("The 'unknown' action is not supported."));
+            }
+
             applicationFactory.GitHubServiceMock.VerifyNoOtherCalls();
             applicationFactory.PersonalLogManagerServiceMock.VerifyNoOtherCalls();
             applicationFactory.SteamStoreServiceMock.VerifyNoOtherCalls();
