@@ -8,6 +8,6 @@ namespace GptActionsOrchestrator.Api.Requests
     {
         [FromQuery(Name = "action")]
         [JsonPropertyName("action")]
-        public string GptActionName { get; set; }
+        public string GptActionName { get; set; } = string.Empty;
     }
 }

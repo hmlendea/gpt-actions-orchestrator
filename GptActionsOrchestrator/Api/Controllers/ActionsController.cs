@@ -14,7 +14,7 @@ namespace GptActionsOrchestrator.Api.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class ActionsController(
+    public sealed class ActionsController(
         IActionsOrchestrator actionsOrchestrator,
         SecuritySettings securitySettings) : NuciApiController
     {

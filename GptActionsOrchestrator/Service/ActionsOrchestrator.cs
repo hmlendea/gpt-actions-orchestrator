@@ -20,6 +20,7 @@ namespace GptActionsOrchestrator.Service
         {
             Dictionary<string, object> parameters = BuildParameters(rawParameters);
             GptAction action = GetGptActionFromParameters(rawParameters);
+
             object data;
 
             if (action == GptAction.GetGitHubRepository)
@@ -79,7 +80,7 @@ namespace GptActionsOrchestrator.Service
             };
         }
 
-        private TObject GetParameter<TObject>(Dictionary<string, object> parameters, string key)
+        private static TObject GetParameter<TObject>(Dictionary<string, object> parameters, string key)
         {
             if (parameters.TryGetValue(key, out object value) && value is TObject typedValue)
             {
@@ -89,11 +90,11 @@ namespace GptActionsOrchestrator.Service
             return default;
         }
 
-        private Dictionary<string, object> BuildParameters(Dictionary<string, string> rawParameters)
+        private static Dictionary<string, object> BuildParameters(Dictionary<string, string> rawParameters)
         {
             Dictionary<string, object> parameters = [];
 
-            foreach (var pair in rawParameters)
+            foreach (KeyValuePair<string, string> pair in rawParameters)
             {
                 if (pair.Key.Contains('.'))
                 {
@@ -119,9 +120,7 @@ namespace GptActionsOrchestrator.Service
 
         private GptAction GetGptActionFromParameters(Dictionary<string, string> parameters)
         {
-            bool theGptActionIsSpecified = parameters.TryGetValue("action", out string gptActionId);
-
-            if (!theGptActionIsSpecified)
+            if (!parameters.TryGetValue("action", out string gptActionId))
             {
                 return GptAction.Unknown;
             }

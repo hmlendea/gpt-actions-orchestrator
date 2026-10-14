@@ -19,21 +19,14 @@ namespace GptActionsOrchestrator
 {
     public static class ServiceCollectionExtensions
     {
-        private static SecuritySettings securitySettings;
-        private static DataStoreSettings dataStoreSettings;
-        private static NuciLoggerSettings loggingSettings;
-
-        private static GitHubSettings gitHubSettings;
-        private static PersonalLogManagerSettings personalLogManagerSettings;
-
         public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration configuration)
         {
-            securitySettings = new SecuritySettings();
-            dataStoreSettings = new DataStoreSettings();
-            loggingSettings = new NuciLoggerSettings();
+            SecuritySettings securitySettings = new();
+            DataStoreSettings dataStoreSettings = new();
+            NuciLoggerSettings loggingSettings = new();
 
-            gitHubSettings = new GitHubSettings();
-            personalLogManagerSettings = new PersonalLogManagerSettings();
+            GitHubSettings gitHubSettings = new();
+            PersonalLogManagerSettings personalLogManagerSettings = new();
 
             configuration.Bind(nameof(SecuritySettings), securitySettings);
             configuration.Bind(nameof(DataStoreSettings), dataStoreSettings);
@@ -53,7 +46,7 @@ namespace GptActionsOrchestrator
         }
 
         public static IServiceCollection AddCustomServices(this IServiceCollection services) => services
-            .AddSingleton<IFileRepository<GptActionAliasDataObject>>(x => new JsonRepository<GptActionAliasDataObject>(dataStoreSettings.GptActionAliasesStorePath))
+            .AddSingleton<IFileRepository<GptActionAliasDataObject>>(x => new JsonRepository<GptActionAliasDataObject>(x.GetRequiredService<DataStoreSettings>().GptActionAliasesStorePath))
             .AddSingleton<IActionsOrchestrator, ActionsOrchestrator>()
             .AddSingleton<IGitHubService, GitHubService>()
             .AddSingleton<IPersonalLogManagerService, PersonalLogManagerService>()
