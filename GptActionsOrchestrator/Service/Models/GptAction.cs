@@ -6,7 +6,7 @@ namespace GptActionsOrchestrator.Service.Models
 {
     public sealed class GptAction : IEquatable<GptAction>
     {
-        private static readonly Dictionary<string, GptAction> Values = new()
+        private static readonly Dictionary<string, GptAction> values = new()
         {
             { nameof(Unknown), new GptAction("unknown", nameof(Unknown)) },
             { nameof(GetGitHubRepository), new GptAction("github.repository.get", nameof(GetGitHubRepository)) },
@@ -22,24 +22,31 @@ namespace GptActionsOrchestrator.Service.Models
 
         public string Name { get; }
 
+        public static GptAction Unknown => values[nameof(Unknown)];
+
+        public static GptAction GetGitHubRepository => values[nameof(GetGitHubRepository)];
+
+        public static GptAction GetGitHubRepositoryFile => values[nameof(GetGitHubRepositoryFile)];
+
+        public static GptAction GetGitHubRepositoryReadme => values[nameof(GetGitHubRepositoryReadme)];
+
+        public static GptAction GetGitHubRepositoryReleases => values[nameof(GetGitHubRepositoryReleases)];
+
+        public static GptAction GetGitHubUserRepositories => values[nameof(GetGitHubUserRepositories)];
+
+        public static GptAction GetPersonalLogs => values[nameof(GetPersonalLogs)];
+
+        public static GptAction GetSteamAppData => values[nameof(GetSteamAppData)];
+
         private GptAction(string id, string name)
         {
             Id = id;
             Name = name;
         }
 
-        public static GptAction Unknown => Values[nameof(Unknown)];
-        public static GptAction GetGitHubRepository => Values[nameof(GetGitHubRepository)];
-        public static GptAction GetGitHubRepositoryFile => Values[nameof(GetGitHubRepositoryFile)];
-        public static GptAction GetGitHubRepositoryReadme => Values[nameof(GetGitHubRepositoryReadme)];
-        public static GptAction GetGitHubRepositoryReleases => Values[nameof(GetGitHubRepositoryReleases)];
-        public static GptAction GetGitHubUserRepositories => Values[nameof(GetGitHubUserRepositories)];
-        public static GptAction GetPersonalLogs => Values[nameof(GetPersonalLogs)];
-        public static GptAction GetSteamAppData => Values[nameof(GetSteamAppData)];
+        public static Array GetValues() => values.Values.ToArray();
 
-        public static Array GetValues() => Values.Values.ToArray();
-
-        public bool Equals(GptAction other)
+        public bool Equals(GptAction? other)
         {
             if (other is null)
             {
@@ -51,27 +58,17 @@ namespace GptActionsOrchestrator.Service.Models
                 return true;
             }
 
-            return Id == other.Id;
+            return string.Equals(Id, other.Id, StringComparison.Ordinal);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? other)
         {
-            if (obj is null)
+            if (other is not GptAction action)
             {
                 return false;
             }
 
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj.GetType() != GetType())
-            {
-                return false;
-            }
-
-            return Equals((GptAction)obj);
+            return Equals(action);
         }
 
         public override int GetHashCode() => $"{nameof(GptAction)}:{Id}".GetHashCode();
@@ -80,14 +77,14 @@ namespace GptActionsOrchestrator.Service.Models
 
         public static GptAction FromString(string value)
         {
-            if (Values.ContainsKey(value))
+            if (values.ContainsKey(value))
             {
-                return Values[value];
+                return values[value];
             }
 
-            if (Values.Values.Any(v => v.Id == value))
+            if (values.Values.Any(action => string.Equals(action.Id, value, StringComparison.Ordinal)))
             {
-                return Values.Values.First(v => v.Id == value);
+                return values.Values.First(action => string.Equals(action.Id, value, StringComparison.Ordinal));
             }
 
             return Unknown;
@@ -97,6 +94,6 @@ namespace GptActionsOrchestrator.Service.Models
 
         public static bool operator !=(GptAction current, GptAction other) => !current.Equals(other);
 
-        public static implicit operator string(GptAction obj) => obj.Name;
+        public static implicit operator string(GptAction action) => action.Name;
     }
 }

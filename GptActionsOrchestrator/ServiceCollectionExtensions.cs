@@ -1,25 +1,30 @@
+using System;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using NuciDAL.Repositories;
 
 using NuciLog;
 using NuciLog.Configuration;
 using NuciLog.Core;
 
 using GptActionsOrchestrator.Configuration;
+using GptActionsOrchestrator.DataAccess.DataObjects;
 using GptActionsOrchestrator.Integrations.GitHub.Configuration;
 using GptActionsOrchestrator.Integrations.GitHub.Service;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Configuration;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service;
 using GptActionsOrchestrator.Integrations.SteamStorefront.Service;
 using GptActionsOrchestrator.Service;
-using NuciDAL.Repositories;
-using GptActionsOrchestrator.DataAccess.DataObjects;
 
 namespace GptActionsOrchestrator
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddConfigurations(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddConfigurations(
+            this IServiceCollection services,
+            IConfiguration configuration)
         {
             SecuritySettings securitySettings = new();
             DataStoreSettings dataStoreSettings = new();
@@ -46,11 +51,15 @@ namespace GptActionsOrchestrator
         }
 
         public static IServiceCollection AddCustomServices(this IServiceCollection services) => services
-            .AddSingleton<IFileRepository<GptActionAliasDataObject>>(x => new JsonRepository<GptActionAliasDataObject>(x.GetRequiredService<DataStoreSettings>().GptActionAliasesStorePath))
+            .AddSingleton<IFileRepository<GptActionAliasDataObject>>(CreateAliasesRepository)
             .AddSingleton<IActionsOrchestrator, ActionsOrchestrator>()
             .AddSingleton<IGitHubService, GitHubService>()
             .AddSingleton<IPersonalLogManagerService, PersonalLogManagerService>()
             .AddSingleton<ISteamStoreService, SteamStoreService>()
             .AddSingleton<ILogger, NuciLogger>();
+
+        private static JsonRepository<GptActionAliasDataObject> CreateAliasesRepository(
+            IServiceProvider serviceProvider)
+            => new(serviceProvider.GetRequiredService<DataStoreSettings>().GptActionAliasesStorePath);
     }
 }

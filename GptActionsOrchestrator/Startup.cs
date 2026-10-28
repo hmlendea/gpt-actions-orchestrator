@@ -24,27 +24,24 @@ namespace GptActionsOrchestrator
                 .AddCustomServices();
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder application, IWebHostEnvironment environment)
         {
-            app.UseNuciApiExceptionHandling();
-            app.UseNuciApiScannerProtection();
-            app.UseNuciApiRequestLogging();
+            application.UseNuciApiExceptionHandling();
+            application.UseNuciApiScannerProtection();
+            application.UseNuciApiRequestLogging();
 
-            if (env.IsDevelopment())
+            if (environment.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                application.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseAuthorization();
+            application.UseHttpsRedirection();
+            application.UseDefaultFiles();
+            application.UseStaticFiles();
+            application.UseRouting();
+            application.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            application.UseEndpoints(endpoints => endpoints.MapControllers());
         }
     }
 }
