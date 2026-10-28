@@ -58,10 +58,8 @@ public sealed class GitHubSettings
 
 ### PersonalLogManagerSettings
 
-**File:** `GptActionsOrchestrator/Integrations/PersonalLogManager/Configuartion/PersonalLogManagerSettings.cs`
+**File:** [PersonalLogManagerSettings.cs](../GptActionsOrchestrator/Integrations/PersonalLogManager/Configuration/PersonalLogManagerSettings.cs)
 **Section:** `personalLogManagerSettings`
-
-**Note:** Directory name typo: `Configuartion` (should be `Configuration`)
 
 ```csharp
 public sealed class PersonalLogManagerSettings

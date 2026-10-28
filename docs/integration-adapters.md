@@ -189,15 +189,13 @@ Exceptions propagate to `ActionsOrchestrator` → `ActionsController` → NuciAP
 
 ### Configuration
 
-**Settings:** `PersonalLogManagerSettings` (`GptActionsOrchestrator/Integrations/PersonalLogManager/Configuartion/PersonalLogManagerSettings.cs`)
+**Settings:** [PersonalLogManagerSettings](../GptActionsOrchestrator/Integrations/PersonalLogManager/Configuration/PersonalLogManagerSettings.cs)
 
 | Property | Type | Required | Description |
 |----------|------|----------|-------------|
 | `BaseUrl` | string | Yes | Base URL of the Personal Log Manager API |
 | `ApiKey` | string | Yes | Bearer token for API requests |
 | `HmacSigningKey` | string | Yes | Shared key for HMAC signing and response validation |
-
-**Note:** Directory name has typo: `Configuartion` (should be `Configuration`)
 
 ### Constants
 

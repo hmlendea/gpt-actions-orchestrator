@@ -553,9 +553,7 @@ public class GptAction : IEquatable<GptAction>
 
 ### PersonalLogManagerSettings.cs
 
-**File:** `GptActionsOrchestrator/Integrations/PersonalLogManager/Configuartion/PersonalLogManagerSettings.cs`
-
-**Note:** Directory name contains typo (`Configuartion` instead of `Configuration`)
+**File:** [PersonalLogManagerSettings.cs](../GptActionsOrchestrator/Integrations/PersonalLogManager/Configuration/PersonalLogManagerSettings.cs)
 
 **Responsibility:**
 - Configuration for Personal Log Manager integration
