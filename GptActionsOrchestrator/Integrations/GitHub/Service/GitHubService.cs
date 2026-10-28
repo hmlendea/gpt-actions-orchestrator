@@ -4,19 +4,22 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
+using NuciExtensions;
+
+using NuciLog.Core;
+
+using NuciWeb.HTTP;
+
 using GptActionsOrchestrator.Integrations.GitHub.Configuration;
 using GptActionsOrchestrator.Integrations.GitHub.Service.Models;
 using GptActionsOrchestrator.Logging;
-
-using NuciExtensions;
-using NuciLog.Core;
-using NuciWeb.HTTP;
 
 namespace GptActionsOrchestrator.Integrations.GitHub.Service
 {
     public sealed class GitHubService(GitHubSettings gitHubSettings, ILogger logger) : IGitHubService
     {
         private static string ApiBaseUrl => "https://api.github.com";
+
         private static string ApiVersion => "2022-11-28";
 
         private readonly HttpClient httpClient = CreateHttpClient(gitHubSettings);
@@ -46,30 +49,8 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
 
             try
             {
-                List<GitHubRepository> repositories = [];
-                int page = 1;
-
-                while (true)
-                {
-                    string endpoint = $"{ApiBaseUrl}/users/{Uri.EscapeDataString(username)}/repos?sort=updated&per_page=100&page={page}";
-
-                    if (isAuthenticatedUserRequested)
-                    {
-                        endpoint = $"{ApiBaseUrl}/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&sort=updated&per_page=100&page={page}";
-                    }
-
-                    List<GitHubRepository> pageItems = httpClient
-                        .GetStringAsync(endpoint).Result
-                        .FromJson<List<GitHubRepository>>();
-
-                    if (pageItems is null || pageItems.Count == 0)
-                    {
-                        break;
-                    }
-
-                    repositories.AddRange(pageItems);
-                    page += 1;
-                }
+                List<GitHubRepository> repositories = RetrievePages<GitHubRepository>(
+                    page => BuildUserRepositoriesEndpoint(username, isAuthenticatedUserRequested, page));
 
                 logger.Debug(
                     MyOperation.GitHubUserRepositoriesRetrieval,
@@ -223,26 +204,8 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
                 string encodedOwner = Uri.EscapeDataString(username);
                 string encodedRepository = Uri.EscapeDataString(repositoryName);
 
-                List<GitHubRelease> releases = [];
-                int page = 1;
-
-                while (true)
-                {
-                    string endpoint =
-                        $"{ApiBaseUrl}/repos/{encodedOwner}/{encodedRepository}/releases?per_page=100&page={page}";
-
-                    List<GitHubRelease> pageItems = httpClient
-                        .GetStringAsync(endpoint).Result
-                        .FromJson<List<GitHubRelease>>();
-
-                    if (pageItems is null || pageItems.Count == 0)
-                    {
-                        break;
-                    }
-
-                    releases.AddRange(pageItems);
-                    page += 1;
-                }
+                List<GitHubRelease> releases = RetrievePages<GitHubRelease>(
+                    page => $"{ApiBaseUrl}/repos/{encodedOwner}/{encodedRepository}/releases?per_page=100&page={page}");
 
                 logger.Debug(
                     MyOperation.GitHubRepositoryReleasesRetrieval,
@@ -261,6 +224,40 @@ namespace GptActionsOrchestrator.Integrations.GitHub.Service
                     logInfos);
 
                 throw;
+            }
+        }
+
+        private static string BuildUserRepositoriesEndpoint(
+            string username,
+            bool isAuthenticatedUserRequested,
+            int page)
+        {
+            if (isAuthenticatedUserRequested)
+            {
+                return $"{ApiBaseUrl}/user/repos?visibility=all&affiliation=owner,collaborator,organization_member&sort=updated&per_page=100&page={page}";
+            }
+
+            return $"{ApiBaseUrl}/users/{Uri.EscapeDataString(username)}/repos?sort=updated&per_page=100&page={page}";
+        }
+
+        private List<TItem> RetrievePages<TItem>(Func<int, string> buildEndpoint)
+        {
+            List<TItem> items = [];
+            int page = 1;
+
+            while (true)
+            {
+                List<TItem>? pageItems = httpClient
+                    .GetStringAsync(buildEndpoint(page)).Result
+                    .FromJson<List<TItem>>();
+
+                if (pageItems is null || !pageItems.Any())
+                {
+                    return items;
+                }
+
+                items.AddRange(pageItems);
+                page += 1;
             }
         }
 

@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
+
+using NuciDAL.Repositories;
+
 using GptActionsOrchestrator.Api.Responses;
 using GptActionsOrchestrator.DataAccess.DataObjects;
 using GptActionsOrchestrator.Integrations.GitHub.Service;
 using GptActionsOrchestrator.Integrations.PersonalLogManager.Service;
 using GptActionsOrchestrator.Integrations.SteamStorefront.Service;
 using GptActionsOrchestrator.Service.Models;
-using NuciDAL.Repositories;
 
 namespace GptActionsOrchestrator.Service
 {
@@ -21,42 +23,18 @@ namespace GptActionsOrchestrator.Service
             Dictionary<string, object> parameters = BuildParameters(rawParameters);
             GptAction action = GetGptActionFromParameters(rawParameters);
 
-            object data;
+            return new()
+            {
+                GptActionName = action.ToString(),
+                Data = ExecuteAction(action, parameters)
+            };
+        }
 
-            if (action == GptAction.GetGitHubRepository)
+        private object ExecuteAction(GptAction action, Dictionary<string, object> parameters)
+        {
+            if (Equals(action, GptAction.GetPersonalLogs))
             {
-                data = gitHubService.GetRepository(
-                    GetParameter<string>(parameters, "username"),
-                    GetParameter<string>(parameters, "repository"));
-            }
-            else if (action == GptAction.GetGitHubRepositoryFile)
-            {
-                data = gitHubService.GetRepositoryFile(
-                    GetParameter<string>(parameters, "username"),
-                    GetParameter<string>(parameters, "repository"),
-                    GetParameter<string>(parameters, "path"));
-            }
-            else if (action == GptAction.GetGitHubRepositoryReadme)
-            {
-                data = gitHubService.GetRepositoryFile(
-                    GetParameter<string>(parameters, "username"),
-                    GetParameter<string>(parameters, "repository"),
-                    "README.md");
-            }
-            else if (action == GptAction.GetGitHubRepositoryReleases)
-            {
-                data = gitHubService.GetRepositoryReleases(
-                    GetParameter<string>(parameters, "username"),
-                    GetParameter<string>(parameters, "repository"));
-            }
-            else if (action == GptAction.GetGitHubUserRepositories)
-            {
-                data = gitHubService.GetUserRepositories(
-                    GetParameter<string>(parameters, "username"));
-            }
-            else if (action == GptAction.GetPersonalLogs)
-            {
-                data = personalLogManagerService.GetPersonalLogs(
+                return personalLogManagerService.GetPersonalLogs(
                     GetParameter<string>(parameters, "date_beginning"),
                     GetParameter<string>(parameters, "date_end"),
                     GetParameter<string>(parameters, "template"),
@@ -64,30 +42,61 @@ namespace GptActionsOrchestrator.Service
                     GetParameter<Dictionary<string, string>>(parameters, "data"),
                     GetParameter<string>(parameters, "count"));
             }
-            else if (action == GptAction.GetSteamAppData)
+
+            if (Equals(action, GptAction.GetSteamAppData))
             {
-                data = steamStoreService.GetAppData(GetParameter<string>(parameters, "appId"));
-            }
-            else
-            {
-                throw new NotImplementedException($"The '{action.Id}' action is not supported.");
+                return steamStoreService.GetAppData(GetParameter<string>(parameters, "appId"));
             }
 
-            return new GetActionResponse
+            return ExecuteGitHubAction(action, parameters);
+        }
+
+        private object ExecuteGitHubAction(GptAction action, Dictionary<string, object> parameters)
+        {
+            if (Equals(action, GptAction.GetGitHubRepository))
             {
-                GptActionName = action.ToString(),
-                Data = data
-            };
+                return gitHubService.GetRepository(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"));
+            }
+            if (Equals(action, GptAction.GetGitHubRepositoryFile))
+            {
+                return gitHubService.GetRepositoryFile(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"),
+                    GetParameter<string>(parameters, "path"));
+            }
+            if (Equals(action, GptAction.GetGitHubRepositoryReadme))
+            {
+                return gitHubService.GetRepositoryFile(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"),
+                    "README.md");
+            }
+            if (Equals(action, GptAction.GetGitHubRepositoryReleases))
+            {
+                return gitHubService.GetRepositoryReleases(
+                    GetParameter<string>(parameters, "username"),
+                    GetParameter<string>(parameters, "repository"));
+            }
+            if (Equals(action, GptAction.GetGitHubUserRepositories))
+            {
+                return gitHubService.GetUserRepositories(
+                    GetParameter<string>(parameters, "username"));
+            }
+
+            throw new NotImplementedException($"The '{action.Id}' action is not supported.");
         }
 
         private static TObject GetParameter<TObject>(Dictionary<string, object> parameters, string key)
+            where TObject : class
         {
-            if (parameters.TryGetValue(key, out object value) && value is TObject typedValue)
+            if (parameters.TryGetValue(key, out object? value) && value is TObject typedValue)
             {
                 return typedValue;
             }
 
-            return default;
+            return null!;
         }
 
         private static Dictionary<string, object> BuildParameters(Dictionary<string, string> rawParameters)
@@ -104,7 +113,8 @@ namespace GptActionsOrchestrator.Service
 
                     if (!parameters.ContainsKey(parentKey))
                     {
-                        parameters[parentKey] = new Dictionary<string, string>();
+                        Dictionary<string, string> childParameters = [];
+                        parameters[parentKey] = childParameters;
                     }
 
                     ((Dictionary<string, string>)parameters[parentKey])[childKey] = pair.Value;
@@ -120,7 +130,7 @@ namespace GptActionsOrchestrator.Service
 
         private GptAction GetGptActionFromParameters(Dictionary<string, string> parameters)
         {
-            if (!parameters.TryGetValue("action", out string gptActionId))
+            if (!parameters.TryGetValue("action", out string? gptActionId))
             {
                 return GptAction.Unknown;
             }
