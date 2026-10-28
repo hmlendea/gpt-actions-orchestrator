@@ -97,6 +97,10 @@ dotnet test GptActionsOrchestrator.IntegrationTests --no-build --verbosity norma
 - Follow the documentation style guide.
 - Preview changes locally if possible.
 
+## 📋 Code of Conduct
+
+This project follows the [Code of Conduct](CODE_OF_CONDUCT.md).
+
 ## 🔒 Security
 
 Report security vulnerabilities per the [Security Policy](SECURITY.md).

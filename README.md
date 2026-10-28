@@ -19,6 +19,7 @@ An ASP.NET Core web service that provides a single HTTP endpoint for executing G
 - [Architecture](#-architecture)
 - [Documentation](#-documentation)
 - [Contributing](#-contributing)
+- [Code of Conduct](#-code-of-conduct)
 - [Security](#-security)
 - [License](#-license)
 
@@ -227,6 +228,10 @@ When doing so, please:
 - Raise a new [issue](https://github.com/hmlendea/gpt-actions-orchestrator/issues) for problems or suggestions
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting issues, suggesting enhancements, and submitting code changes.
+
+## 📜 Code of Conduct
+
+See the [Code of Conduct](CODE_OF_CONDUCT.md) for the standards of conduct expected in all project spaces.
 
 ## 🔒 Security
 
