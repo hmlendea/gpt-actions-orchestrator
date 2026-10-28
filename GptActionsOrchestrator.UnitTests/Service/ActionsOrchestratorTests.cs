@@ -24,11 +24,11 @@ namespace GptActionsOrchestrator.UnitTests.Service
     [TestFixture]
     public sealed class ActionsOrchestratorTests
     {
-        Mock<IGitHubService> gitHubServiceMock;
-        Mock<IPersonalLogManagerService> personalLogManagerServiceMock;
-        Mock<ISteamStoreService> steamStoreServiceMock;
-        Mock<IFileRepository<GptActionAliasDataObject>> aliasesRepositoryMock;
-        ActionsOrchestrator orchestrator;
+        private Mock<IGitHubService> gitHubServiceMock;
+        private Mock<IPersonalLogManagerService> personalLogManagerServiceMock;
+        private Mock<ISteamStoreService> steamStoreServiceMock;
+        private Mock<IFileRepository<GptActionAliasDataObject>> aliasesRepositoryMock;
+        private ActionsOrchestrator orchestrator;
 
         [SetUp]
         public void SetUp()

@@ -76,7 +76,7 @@ Mapping between documentation topics and their corresponding source code locatio
 |------|---------|----------------------|
 | `Integrations/PersonalLogManager/Service/PersonalLogManagerService.cs` | PLM API client | integration-adapters.md, error-handling.md, logging-observability.md, security.md |
 | `Integrations/PersonalLogManager/Client/PersonalLogManagerClient.cs` | HMAC HTTP client | security.md |
-| `Integrations/PersonalLogManager/Configuartion/` | PLM-specific configuration | integration-adapters.md |
+| [Integrations/PersonalLogManager/Configuration/](../GptActionsOrchestrator/Integrations/PersonalLogManager/Configuration/) | PLM-specific configuration | integration-adapters.md |
 | `Models/PersonalLogManagerResponse.cs` | PLM response model | integration-adapters.md |
 
 #### Steam Storefront Adapter
