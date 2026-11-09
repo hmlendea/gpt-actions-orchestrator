@@ -1,7 +1,8 @@
 [![Donate](https://img.shields.io/badge/-%E2%99%A5%20Donate-%23ff69b4)](https://hmlendea.go.ro/funding)
-[![License](https://img.shields.io/github/license/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/blob/main/LICENSE)
 [![Latest Release](https://img.shields.io/github/v/release/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/releases/latest)
 [![Build Status](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/dotnet.yml/badge.svg)](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/dotnet.yml)
+[![Security Scan](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/security.yml/badge.svg)](https://github.com/hmlendea/gpt-actions-orchestrator/actions/workflows/security.yml)
+[![License](https://img.shields.io/github/license/hmlendea/gpt-actions-orchestrator)](https://github.com/hmlendea/gpt-actions-orchestrator/blob/main/LICENSE)
 
 # GPT Actions Orchestrator
 
