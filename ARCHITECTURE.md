@@ -341,6 +341,17 @@ Execute the principal automated verification with:
 dotnet test GptActionsOrchestrator.slnx
 ```
 
+## 🔄 Continuous Integration
+
+The repository uses GitHub Actions for continuous integration and security scanning:
+
+| Workflow | File | Triggers | Purpose |
+|----------|------|----------|---------|
+| .NET Build & Test | `.github/workflows/dotnet.yml` | Push/PR to `master` | Restore, build, and run unit/integration tests |
+| Security Scan | `.github/workflows/security.yml` | Push/PR to `master`, weekly schedule | Vulnerable package detection and CodeQL analysis |
+
+The security scan workflow runs `dotnet list package --vulnerable --include-transitive` and performs CodeQL static analysis on the C# codebase.
+
 ## ⚠️ Design Constraints
 
 - **Centralised Dispatch Branching:** `ActionsOrchestrator` uses explicit conditional branching per action, which simplifies traceability but increases modification pressure as actions grow.

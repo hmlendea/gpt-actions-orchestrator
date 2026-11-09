@@ -51,3 +51,17 @@ This project follows coordinated disclosure:
 2. A remediation plan is prepared and validated.
 3. Public disclosure is published after a fix, mitigation, or agreed risk decision is available.
 4. Credit is attributed in accordance with reporter preference and project policy.
+
+## 🔍 Automated Security Scanning
+
+This repository uses GitHub Actions for automated security scanning:
+
+| Workflow | File | Triggers | Purpose |
+|----------|------|----------|---------|
+| Security Scan | `.github/workflows/security.yml` | Push/PR to `master`, weekly schedule | Vulnerable package detection and CodeQL static analysis |
+
+The security scan workflow runs:
+- `dotnet list package --vulnerable --include-transitive` to detect vulnerable NuGet dependencies
+- CodeQL static analysis on the C# codebase
+
+Results are uploaded to GitHub Code Scanning and visible in the Security tab.
